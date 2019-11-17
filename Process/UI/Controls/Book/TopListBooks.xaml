@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Process.UI.Controls.Book.TopListBooks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Process.UI.Controls.Book"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="400">
+    
+    <Border Background="{StaticResource WhiteBrush}" 
+            CornerRadius="5" Padding="10" Margin="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".02" ShadowDepth="0" Direction="0"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Foreground="{StaticResource BlueGrey500Brush}" 
+                       Text="{Binding OfferText, FallbackValue='You didnt save a diary today, you want to save it?'}"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <Button Grid.Column="1" Margin="10 0"
+                    Content="Add Diary Log" HorizontalAlignment="Center"
+                    Style="{StaticResource LeftIconButtonStyle}"
+                    Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                    Command="{Binding AddQuickDiaryLogkCommand}"/>
+
+        </Grid>
+    </Border>
+
+</UserControl>

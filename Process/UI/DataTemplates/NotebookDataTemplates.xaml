@@ -1,0 +1,80 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+                    xmlns:converters="clr-namespace:Process.UI.Converters"
+                    xmlns:pages="clr-namespace:Process.UI.Pages">
+    
+    <converters:IntMinusConverter x:Key="IntMinusConverter"/>
+
+    <!-- Notebook Log Item -->
+    <DataTemplate x:Key="NotebookLogDataTemplate">
+        <Border CornerRadius="3" Background="{StaticResource WhiteBrush}" 
+                Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth, 
+                        Converter={StaticResource IntMinusConverter}, ConverterParameter=30}"
+                Padding="20 10" Margin="0 5" Height="Auto">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".02" ShadowDepth="0" Direction="0"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Path Stretch="Uniform" Height="18" 
+                      Data="{Binding Source={StaticResource Text}, Path=Data}"
+                      Fill="{StaticResource DarkGreyBrush}" />
+
+                <TextBlock Grid.Column="1" 
+                           Margin="10 0" 
+                           Text="{Binding Title}"
+                           VerticalAlignment="Center"/>
+
+                <Button Grid.Column="2" Height="30"
+                        Margin="10 0 0 0" Width="Auto"
+                        Style="{StaticResource LeftIconButtonStyle}"
+                        Tag="{Binding Source={StaticResource SquareEditOutline}, Path=Data}"
+                        Command="{Binding DataContext.EditNotebookLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type pages:BasePage}}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+
+                <Button Grid.Column="3" Height="30" 
+                        Margin="10 0 0 0" Width="Auto"
+                        Style="{StaticResource LeftIconButtonStyle}"
+                        Tag="{Binding Source={StaticResource DeleteOutline}, Path=Data}"
+                        Command="{Binding DataContext.DeleteNotebookLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type pages:BasePage}}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <!-- Notebook -->
+    <DataTemplate x:Key="NotebokItemDataTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ListView Margin="0 10" Width="400"
+                      ItemsSource="{Binding NotebookLogs}"
+                      ItemTemplate="{StaticResource NotebookLogDataTemplate}"
+                      SelectedItem="{Binding SelectedNotebookLog}"
+                      VerticalAlignment="Top"
+                      Tag="There is no Notebook Log"/>
+
+            <Border Grid.Column="1" CornerRadius="5" 
+                    Padding="10" Margin="0 10 10 10"
+                    Background="{StaticResource WhiteBrush}">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Color="#000" Opacity=".05" ShadowDepth="5" Direction="0"/>
+                </Border.Effect>
+                <markdig:MarkdownViewer Markdown="{Binding SelectedNotebookLog.Content}"/>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

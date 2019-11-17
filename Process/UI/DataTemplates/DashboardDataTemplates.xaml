@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Process.UI.Controls"
+                    xmlns:pages="clr-namespace:Process.UI.Pages"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
+    <DataTemplate x:Key="QuickInfoDataTemplate">
+        <controls:InfoCard IconData="{Binding IconData}"
+                           InfoText1="{Binding InfoText1}"
+                           InfoText2="{Binding InfoText2}"
+                           IconBackgroundColor="{Binding IconBackground}"
+                           IconColor="{StaticResource Blue50Brush}"
+                           InfoText1FontSize="18"
+                           InfoText2FontSize="17"
+                           IconHeight="40" IconWidth="40"
+                           Height="90" Width="290"/>
+    </DataTemplate>
+    
+</ResourceDictionary>

@@ -1,0 +1,40 @@
+﻿<local:BasePage x:Class="Process.UI.Pages.Dashboard"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Process.UI.Pages"
+      xmlns:viewmodel="clr-namespace:Process.ViewModel.Dashboard"
+      xmlns:diaryControls="clr-namespace:Process.UI.Controls.Diary"
+      xmlns:bookControls="clr-namespace:Process.UI.Controls.Book"
+      xmlns:controls="clr-namespace:Process.UI.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="900"
+      DataContext="{Binding DashboardVM, Source={StaticResource Locator}}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <diaryControls:DiaryLogOfDay/>
+
+            <ListView Grid.Row="1" 
+                      ItemsSource="{Binding QuickInfos}"
+                      ItemTemplate="{StaticResource QuickInfoDataTemplate}"/>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <bookControls:TopListBooks/>
+                <bookControls:TopListBooks Grid.Column="1"/>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</local:BasePage>
