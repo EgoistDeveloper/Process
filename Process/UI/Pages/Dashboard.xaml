@@ -6,11 +6,16 @@
       xmlns:local="clr-namespace:Process.UI.Pages"
       xmlns:viewmodel="clr-namespace:Process.ViewModel.Dashboard"
       xmlns:diaryControls="clr-namespace:Process.UI.Controls.Diary"
-      xmlns:bookControls="clr-namespace:Process.UI.Controls.Book"
       xmlns:controls="clr-namespace:Process.UI.Controls"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="900"
       DataContext="{Binding DashboardVM, Source={StaticResource Locator}}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
@@ -18,22 +23,147 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <diaryControls:DiaryLogOfDay/>
+            <Border Background="{StaticResource WhiteBrush}"
+                    Margin="10" Height="270">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
+                </Border.Effect>
 
-            <ListView Grid.Row="1" 
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="3*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Foreground="{StaticResource BlueGrey700Brush}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontSize="25">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} / {1}" FallbackValue="Istanbul / TR">
+                                    <Binding Path="City"/>
+                                    <Binding Path="CountryCode"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <Grid Grid.Row="1"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid Margin="0 0 15 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Path Grid.Row="1"
+                                      Data="{Binding TodayWeatherInfo.Description, Converter={StaticResource WeatherDescriptionToIconConverter}}"
+                                      Height="40" Width="40"
+                                      Stretch="Uniform"
+                                      Fill="{StaticResource BlueGrey900Brush}"/>
+
+                                <TextBlock Grid.Column="1" 
+                                           Text="{Binding TodayWeatherInfo.Temperature, StringFormat={}{0:0}°C, FallbackValue=99}"
+                                           FontSize="40"
+                                           VerticalAlignment="Center"/>
+
+                            </Grid>
+                            <TextBlock Grid.Row="1" 
+                                       Text="{Binding TodayWeatherInfo.Weather, FallbackValue=Sunny, UpdateSourceTrigger=PropertyChanged}"
+                                       FontSize="20" Margin="10"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Grid>
+
+                    <TabControl Grid.Column="1">
+                        <TabItem Header="Next Days" Tag="{Binding Source={StaticResource WeatherHazy}, Path=Data}">
+                            <ListView ItemTemplate="{StaticResource WeatherDayDataTemplate}" 
+                                      ItemsSource="{Binding WeatherInfos}"/>
+                        </TabItem>
+                        <TabItem Header="Graphs" Tag="{Binding Source={StaticResource WeatherSunsetUp}, Path=Data}">
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+
+            <diaryControls:DiaryLogOfDay Grid.Row="1"/>
+
+            <ListView Grid.Row="2" 
                       ItemsSource="{Binding QuickInfos}"
                       ItemTemplate="{StaticResource QuickInfoDataTemplate}"/>
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <bookControls:TopListBooks/>
-                <bookControls:TopListBooks Grid.Column="1"/>
+                <Border Background="{StaticResource WhiteBrush}" 
+                        CornerRadius="5" Margin="10 10 10 0">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="{StaticResource Blue400Brush}"
+                                CornerRadius="5 5 0 0"/>
+                        <TextBlock Foreground="{StaticResource BlueGrey50Brush}" 
+                                   Text="Top 10 Books"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+
+                        <ListView Grid.Row="1" Margin="0 20 0 20"
+                                  ItemTemplate="{StaticResource BookLogTopListItemDataTemplate}" 
+                                  ItemsSource="{Binding BookLogTopListItems}"/>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" Background="{StaticResource WhiteBrush}" 
+                        CornerRadius="5" Margin="10 10 10 0">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="{StaticResource Blue400Brush}"
+                                CornerRadius="5 5 0 0"/>
+                        <TextBlock Foreground="{StaticResource BlueGrey50Brush}" 
+                                   Text="Last ToDos"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+
+                        <ListView Grid.Row="1" Margin="0 20 0 20"
+                                  VerticalAlignment="Top"
+                                  ItemTemplate="{StaticResource LastToDoItemDataTemplate}" 
+                                  ItemsSource="{Binding ToDoLastItems}"/>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
     </ScrollViewer>

@@ -20,7 +20,7 @@
                     </Border.Effect>
                 </Border>
 
-                <TextBlock Foreground="{StaticResource Blue700Brush}"
+                <TextBlock Foreground="{StaticResource Blue500Brush}"
                            Text="PROCESS"
                            FontSize="20"
                            FontWeight="Bold"

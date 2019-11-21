@@ -1,25 +1,25 @@
 ﻿using GalaSoft.MvvmLight;
-using System;
-using System.Windows;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Windows.Input;
-using System.Windows.Controls;
-using Process.Models.Common;
-using Process.Models.Diary;
 using Process.Data;
+using Process.Dialogs.Calendar;
 using Process.Helpers;
-using LiveCharts;
-using Process.Dialogs.Diary;
+using Process.Models.Calendar;
+using Process.Models.Common;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
-namespace Process.ViewModel.Diary
+namespace Process.ViewModel.Calendar
 {
-    public class DiaryLogViewModel : ViewModelBase
+    public class CalendarViewModel : ViewModelBase
     {
-        public DiaryLogViewModel()
+        public CalendarViewModel()
         {
             LoadYears()
             .ContinueWith(async T => await CreateCalendarItems()
@@ -33,8 +33,6 @@ namespace Process.ViewModel.Diary
         #region Commands
 
         public ICommand YearChangedCommand { get; set; }
-        public ICommand AddToBlackListCommand { get; set; }
-        public ICommand RemoveFromBlackListCommand { get; set; }
         public ICommand CalendarButtonCommand { get; set; }
 
         #endregion
@@ -54,25 +52,7 @@ namespace Process.ViewModel.Diary
         /// <summary>
         /// Months of the selected year
         /// </summary>
-        public ObservableCollection<DiaryMonth> Months { get; set; } = new ObservableCollection<DiaryMonth>();
-
-        /// <summary>
-        /// Most used words of diary logs
-        /// </summary>
-        public ObservableCollection<WordItem> WordList { get; set; }
-
-        /// <summary>
-        /// Black list for most used words
-        /// </summary>
-        public ObservableCollection<WordItem> BlackWordsList { get; set; }
-
-        #region Stat Properties
-
-        public SeriesCollection SeriesCollection { get; set; } = new SeriesCollection();
-        public List<string> Labels { get; set; } = new List<string>();
-        public Func<double, string> YFormatter { get; set; }
-
-        #endregion
+        public ObservableCollection<CalendarMonth> Months { get; set; } = new ObservableCollection<CalendarMonth>();
 
         #endregion
 
@@ -126,11 +106,11 @@ namespace Process.ViewModel.Diary
         /// </summary>
         public async Task CreateCalendarItems()
         {
-            var months = new ObservableCollection<DiaryMonth>();
+            var months = new ObservableCollection<CalendarMonth>();
 
             for (int i = 1; i < 13; i++)
             {
-                var days = new List<DiaryDay>();
+                var days = new List<CalendarDay>();
 
                 var firstDayOfMonth = new DateTime(TargetYear.YearNumber, i, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
@@ -142,7 +122,7 @@ namespace Process.ViewModel.Diary
                 // previous month days
                 for (int ii = previousCoundown - 1; ii > -1; ii--)
                 {
-                    days.Add(new DiaryDay 
+                    days.Add(new CalendarDay 
                     { 
                         Date = new DateTime(TargetYear.YearNumber, i - 1 < 2 ? 1 : i - 1, lastDayLastMonth.Day - ii),
                         DayStatus = DayStatus.DayOfPreviousMonth
@@ -156,7 +136,7 @@ namespace Process.ViewModel.Diary
                 {
                     var date = new DateTime(TargetYear.YearNumber, i, ii);
 
-                    days.Add(new DiaryDay
+                    days.Add(new CalendarDay
                     {
                         IsEnabled = true,
                         IsDefault = date != DateTime.Now ? false : true,
@@ -175,19 +155,19 @@ namespace Process.ViewModel.Diary
 
                 for (int ii = 1; ii < nextCoundown + 1; ii++)
                 {
-                    days.Add(new DiaryDay
+                    days.Add(new CalendarDay
                     {
                         Date = new DateTime(TargetYear.YearNumber, i + 1 > 12 ? 12 : i + 1, ii),
                         DayStatus = DayStatus.DayOfNextMonth
                     });
                 }
 
-                Months.Add(new DiaryMonth 
-                { 
+                months.Add(new CalendarMonth 
+                {
                     MonthNumber = i,
                     MonthName = Settings.CultureInfo.DateTimeFormat.GetMonthName(i),
                     Year = TargetYear.YearNumber,
-                    DiaryDays = days
+                    CalendarDays = days
                 });
             }
 
@@ -202,65 +182,29 @@ namespace Process.ViewModel.Diary
             using var db = new AppDbContext();
 
             // diary logs
-            var diaryLogs = db.DiaryLogs.Where(x => EF.Functions.Like(x.Date.Year.ToString(), TargetYear.YearNumber.ToString()))
-            .Select(x => new DiaryLog
+            var diaryLogs = db.CalendarLogs.Where(x => EF.Functions.Like(x.Date.Year.ToString(), TargetYear.YearNumber.ToString()))
+            .Select(x => new CalendarLog
             {
                 Id = x.Id,
                 Date = x.Date,
-                LogContent = x.LogContent,
                 AddedDate = x.AddedDate,
-                UpdateDate = x.UpdateDate,
-                LogContentLength = x.LogContentLength,
-                DiaryLogRate = db.DiaryLogRates.FirstOrDefault(c => c.DiaryLogId == x.Id)
+                Activity = x.Activity,
+                IsDone = x.IsDone,
+                Description = x.Description
             }).ToList();
 
             // set diarylogs of days
-            foreach (DiaryLog log in diaryLogs)
+            foreach (CalendarLog log in diaryLogs)
             {
                 var targetMonth = log.Date.Month - 1;
 
-                if (Months[targetMonth].DiaryDays.Any(x => x.Date == log.Date))
+                if (Months[targetMonth].CalendarDays.Any(x => x.Date == log.Date))
                 {
-                    var day = Months[targetMonth].DiaryDays.First(x => x.Date == log.Date);
-                    day.DiaryLog = log;
+                    var day = Months[targetMonth].CalendarDays.First(x => x.Date == log.Date);
+                    day.CalendarLog = log;
                     day.DayStatus = log.Date.Date == DateTime.Now.Date ? DayStatus.LoggedToday : DayStatus.LoggedDay;
                 }
             }
-
-            // load black list
-            BlackWordsList = db.DiaryBlackWords.Select(x => new WordItem
-            {
-                Id = x.Id,
-                Word = x.Word,
-                Count = x.Word.Length,
-                Command = new RelayParameterizedCommand(RemoveFromBlackList)
-            }).ToObservableCollection();
-
-            // load most used words of diarylogs
-            var wordList = diaryLogs.SelectMany(x => x.LogContent
-            .Replace("\n", null).Replace("\r", null).ToLower().Split(new[] { ' ', '.', ',', '\'' }))
-            .GroupBy(x => x)
-            .Select(x => new WordItem
-            {
-                Word = Settings.CultureInfo.TextInfo.ToTitleCase(x.Key),
-                Count = x.Count(),
-                Command = new RelayParameterizedCommand(AddToBlackList)
-            })
-            .Where(x => x.Word.Length > 2 && x.Count > 10)
-            .OrderBy(a => Guid.NewGuid())
-            .ToList();
-
-            // remove black list items from most used words list
-            for (int i = 0; i < wordList.Count; i++)
-            {
-                if (BlackWordsList.Any(x => x.Word == wordList[i].Word.ToLower()))
-                {
-                    wordList.Remove(wordList[i]);
-                }
-            }
-
-            // set filtered list to ToObservableCollection
-            WordList = wordList.Take(200).ToObservableCollection();
         }
 
         #endregion
@@ -274,25 +218,25 @@ namespace Process.ViewModel.Diary
         public void CalendarButtonAction(object sender)
         {
             if (sender == null || !(sender is Button button)) return;
-            if (!(button.DataContext is DiaryDay day)) return;
+            if (!(button.DataContext is CalendarDay day)) return;
 
-            var dialog = new DiaryLogDialog();
+            var dialog = new CalendarLogDialog();
 
             dialog.Closing += (s, a) =>
             {
-                if (dialog.DataContext is AddDiaryLogViewModel vm && vm.DiaryLog.LogContentLength > 0)
+                if (dialog.DataContext is CalendarLogViewModel vm && vm.CalendarLog.Activity.Length > 0)
                 {
                     day.DayStatus = day.Date == DateTime.Now ? DayStatus.LoggedToday : DayStatus.LoggedDay;
-                    day.DiaryLog = vm.DiaryLog;
+                    day.CalendarLog = vm.CalendarLog;
 
                     for (int i = 0; i < Months.Count; i++)
                     {
                         if (Months[i].MonthNumber == day.Date.Month)
                         {
-                            for (int ii = 0; ii < Months[i].DiaryDays.Count; ii++)
+                            for (int ii = 0; ii < Months[i].CalendarDays.Count; ii++)
                             {
-                                if (Months[i].DiaryDays[ii].Date == day.Date)
-                                    Months[i].DiaryDays[ii] = day;
+                                if (Months[i].CalendarDays[ii].Date == day.Date)
+                                    Months[i].CalendarDays[ii] = day;
                                 return;
                             }
                         }
@@ -300,73 +244,10 @@ namespace Process.ViewModel.Diary
                 }
             };
 
-            dialog.ShowDialogWindow(new AddDiaryLogViewModel(dialog, day.Date, day.DiaryLog));
+            dialog.ShowDialogWindow(new CalendarLogViewModel(dialog, day.Date, day.CalendarLog));
         }
 
-        /// <summary>
-        /// Word add to black list
-        /// </summary>
-        /// <param name="sender"></param>
-        public void AddToBlackList(object sender)
-        {
-            var textBlock = sender as TextBlock;
-            var wordItem = textBlock.DataContext as WordItem;
 
-            var blackWord = new DiaryBlackWord
-            {
-                Word = wordItem.Word.ToLower()
-            };
-
-            using var db = new AppDbContext();
-
-            if (!db.DiaryBlackWords.Any(x => x.Word == wordItem.Word.ToLower()))
-            {
-                db.DiaryBlackWords.Add(blackWord);
-
-                db.SaveChanges();
-            }
-
-            WordList.Remove(wordItem);
-
-            BlackWordsList.Add(new WordItem 
-            {
-                Id = blackWord.Id,
-                Word = wordItem.Word,
-                Command = new RelayParameterizedCommand(RemoveFromBlackList)
-            });
-        }
-
-        /// <summary>
-        /// Word remove from black list
-        /// </summary>
-        /// <param name="sender"></param>
-        public void RemoveFromBlackList(object sender)
-        {
-            var textBlock = sender as TextBlock;
-            var wordItem = textBlock.DataContext as WordItem;
-
-            using var db = new AppDbContext();
-
-            db.DiaryBlackWords.Remove(new DiaryBlackWord 
-            {
-                Id = wordItem.Id,
-                Word = wordItem.Word
-            });
-
-            db.SaveChanges();
-
-            var item = BlackWordsList.First(x => x.Word == wordItem.Word);
-
-            BlackWordsList.Remove(item);
-
-            WordList.Add(new WordItem 
-            { 
-                Id = wordItem.Id,
-                Word = wordItem.Word,
-                Count = 0,
-                Command = new RelayParameterizedCommand(AddToBlackList)
-            });
-        }
 
         #endregion
     }

@@ -13,7 +13,6 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen">
 
-
     <Window.Resources>
         <Style TargetType="{x:Type local:MainWindow}" BasedOn="{StaticResource MainWindowStyle}"/>
     </Window.Resources>

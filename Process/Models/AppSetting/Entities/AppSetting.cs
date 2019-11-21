@@ -1,0 +1,16 @@
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace Process.Models.AppSetting
+{
+    public class AppSetting : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public long Id { get; set; }
+        [Required]
+        public string SettingName { get; set; }
+        [Required]
+        public string Value { get; set; }
+    }
+}

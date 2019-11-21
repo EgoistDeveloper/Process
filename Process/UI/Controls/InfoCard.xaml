@@ -24,8 +24,8 @@
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <!-- Content -->
                                     <Border x:Name="border" CornerRadius="{Binding CornerRadius}" 
-                                    Background="{Binding BackgroundColor, FallbackValue=White}"
-                                    ToolTip="{Binding Tooltip}">
+                                            Background="{Binding BackgroundColor, FallbackValue=White}"
+                                            ToolTip="{Binding Tooltip}">
                                         <Border.Effect>
                                             <DropShadowEffect BlurRadius="7" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
                                         </Border.Effect>

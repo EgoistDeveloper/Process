@@ -214,6 +214,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -249,6 +250,9 @@
     </Compile>
     <Compile Include="Dialogs\Book\BookLogReviewDialog.xaml.cs">
       <DependentUpon>BookLogReviewDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Calendar\CalendarLogDialog.xaml.cs">
+      <DependentUpon>CalendarLogDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DeleteDialog.xaml.cs">
       <DependentUpon>DeleteDialog.xaml</DependentUpon>
@@ -311,6 +315,7 @@
     <Compile Include="DI\DI.cs" />
     <Compile Include="Helpers\ApplicationPageHelpers.cs" />
     <Compile Include="Helpers\ExpressionHelpers.cs" />
+    <Compile Include="Helpers\HttpHelpers.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\LimitSelectionBehavior.cs" />
     <Compile Include="Helpers\PreviousNextMonthDays.cs" />
@@ -319,28 +324,35 @@
     <Compile Include="Helpers\ToObservableCollection.cs" />
     <Compile Include="Helpers\WindowEffect.cs" />
     <Compile Include="Helpers\WindowResizer.cs" />
-    <Compile Include="Migrations\20191114141053_First.cs" />
-    <Compile Include="Migrations\20191114141053_First.designer.cs">
-      <DependentUpon>20191114141053_First.cs</DependentUpon>
+    <Compile Include="Migrations\20191120201906_First.cs" />
+    <Compile Include="Migrations\20191120201906_First.designer.cs">
+      <DependentUpon>20191120201906_First.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AppDbContextModelSnapshot.cs" />
     <Compile Include="Models\Book\BookLogBookItem.cs" />
     <Compile Include="Models\Book\BookLogItem.cs" />
     <Compile Include="Models\Book\BookLogReviewItem.cs" />
+    <Compile Include="Models\Book\BookLogTopListItem.cs" />
     <Compile Include="Models\Book\Entities\BookLogAuthor.cs" />
     <Compile Include="Models\Book\Entities\BookLogBook.cs" />
     <Compile Include="Models\Book\Entities\BookLogBookGenre.cs" />
     <Compile Include="Models\Book\Entities\BookLogGenre.cs" />
     <Compile Include="Models\Book\Entities\BookLogReview.cs" />
+    <Compile Include="Models\Calendar\CalendarDay.cs" />
+    <Compile Include="Models\Calendar\CalendarMonth.cs" />
+    <Compile Include="Models\Calendar\Entities\CalendarLog.cs" />
     <Compile Include="Models\Common\DateTime\Day.cs" />
     <Compile Include="Models\Common\DateTime\Month.cs" />
     <Compile Include="Models\Common\DateTime\Week.cs" />
     <Compile Include="Models\Common\DateTime\Year.cs" />
+    <Compile Include="Models\Common\Enums\OrderBy.cs" />
     <Compile Include="Models\Common\Enums\ApplicationPage.cs" />
     <Compile Include="Models\Common\Enums\DayStatus.cs" />
     <Compile Include="Models\Common\Enums\MessageDialogType.cs" />
     <Compile Include="Models\Common\NavbarItem.cs" />
     <Compile Include="Models\Dashboard\QuickInfo.cs" />
+    <Compile Include="Models\Dashboard\Temperatures.cs" />
+    <Compile Include="Models\Dashboard\WeatherInfo.cs" />
     <Compile Include="Models\Diary\WordItem.cs" />
     <Compile Include="Models\Diary\DiaryDay.cs" />
     <Compile Include="Models\Diary\DiaryMonth.cs" />
@@ -350,11 +362,6 @@
     <Compile Include="Models\Diary\Entities\DiaryLogRate.cs" />
     <Compile Include="Models\Diary\Entities\DiaryBlackWord.cs" />
     <Compile Include="Models\Diary\Enums\FeelingStatus.cs" />
-    <Compile Include="Models\Diary\Factory\DayFactory.cs" />
-    <Compile Include="Models\Diary\Factory\MonthFactory.cs" />
-    <Compile Include="Models\Diary\Interfaces\IDay.cs" />
-    <Compile Include="Models\Diary\Interfaces\IDiaryLog.cs" />
-    <Compile Include="Models\Diary\Interfaces\IMonth.cs" />
     <Compile Include="Models\Diet\DietDay.cs" />
     <Compile Include="Models\Diet\DietLastSelectedFood.cs" />
     <Compile Include="Models\Diet\DietLogItem.cs" />
@@ -385,8 +392,10 @@
     <Compile Include="Models\Pocket\PocketCategoryPriorityItem.cs" />
     <Compile Include="Models\Pocket\PocketInOutItem.cs" />
     <Compile Include="Models\Pocket\PocketInOutTypeItem.cs" />
+    <Compile Include="Models\AppSetting\Entities\AppSetting.cs" />
     <Compile Include="Models\ToDo\Entities\ToDo.cs" />
     <Compile Include="Models\ToDo\Entities\ToDoList.cs" />
+    <Compile Include="Models\ToDo\ToDoLastItem.cs" />
     <Compile Include="Models\ToDo\ToDoListItem.cs" />
     <Compile Include="Models\Workout\BodyPartItem.cs" />
     <Compile Include="Models\Workout\Entities\Workout.cs" />
@@ -406,9 +415,6 @@
     <Compile Include="UI\Animations\PageAnimation.cs" />
     <Compile Include="UI\Controls\AlertBox.xaml.cs">
       <DependentUpon>AlertBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Controls\Book\TopListBooks.xaml.cs">
-      <DependentUpon>TopListBooks.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Controls\Common\Calendar\Calendar.xaml.cs">
       <DependentUpon>Calendar.xaml</DependentUpon>
@@ -449,12 +455,16 @@
     <Compile Include="UI\Converters\SubstringConverter.cs" />
     <Compile Include="UI\Converters\ThisMonthUnderlineConverter.cs" />
     <Compile Include="UI\Converters\UnitToShortConverter.cs" />
+    <Compile Include="UI\Converters\WeatherDescriptionToIconConverter.cs" />
     <Compile Include="UI\Pages\Base\BasePage.cs" />
     <Compile Include="UI\Pages\Base\PageHost.xaml.cs">
       <DependentUpon>PageHost.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\BookLog.xaml.cs">
       <DependentUpon>BookLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Calendar.xaml.cs">
+      <DependentUpon>Calendar.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\Dashboard.xaml.cs">
       <DependentUpon>Dashboard.xaml</DependentUpon>
@@ -470,6 +480,9 @@
     </Compile>
     <Compile Include="UI\Pages\PocketBank.xaml.cs">
       <DependentUpon>PocketBank.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Pages\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Pages\ToDoLog.xaml.cs">
       <DependentUpon>ToDoLog.xaml</DependentUpon>
@@ -497,6 +510,8 @@
     <Compile Include="ViewModel\Book\BookLogGenreViewModel.cs" />
     <Compile Include="ViewModel\Book\BookLogReviewViewModel.cs" />
     <Compile Include="ViewModel\Book\BookLogViewModel.cs" />
+    <Compile Include="ViewModel\Calendar\CalendarLogViewModel.cs" />
+    <Compile Include="ViewModel\Calendar\CalendarViewModel.cs" />
     <Compile Include="ViewModel\Dashboard\DashboardViewModel.cs" />
     <Compile Include="ViewModel\Dialog\BaseDialogViewModel.cs" />
     <Compile Include="ViewModel\Dialog\DialogWindowViewModel.cs" />
@@ -514,6 +529,7 @@
     <Compile Include="ViewModel\Pocket\CategoryInputViewModel.cs" />
     <Compile Include="ViewModel\Pocket\InOutInputViewModel.cs" />
     <Compile Include="ViewModel\Pocket\PocketBankViewModel.cs" />
+    <Compile Include="ViewModel\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoItemInputViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoListInputViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoLogViewModel.cs" />
@@ -538,6 +554,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Book\BookLogReviewDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Calendar\CalendarLogDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -649,10 +669,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Controls\Book\TopListBooks.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\Controls\Common\Calendar\Calendar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -676,6 +692,10 @@
     <Page Include="UI\DataTemplates\BookLogDataTemplates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\DataTemplates\CalendarDataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\DataTemplates\CommonDataTemplates.xaml">
       <SubType>Designer</SubType>
@@ -721,6 +741,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Pages\Calendar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Pages\Dashboard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -738,6 +762,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Pages\PocketBank.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Pages\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

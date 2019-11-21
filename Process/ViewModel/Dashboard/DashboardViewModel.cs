@@ -14,12 +14,30 @@ using Process.Models.Common;
 using System.Windows.Controls;
 using static Process.DI.DI;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
+using Process.Models.Book;
+using Process.Models.ToDo;
+using Process.Helpers;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Process.ViewModel.Dashboard
 {
     public class DashboardViewModel : ViewModelBase
     {
         public DashboardViewModel()
+        {
+            Init();
+
+            GoToCommand = new RelayParameterizedCommand(GoTo);
+            LoadedCommand = new RelayCommand(p => Init());
+            SetIsDoneCommand = new RelayParameterizedCommand(SetIsDone);
+            SetIsImportantCommand = new RelayParameterizedCommand(SetIsImportant);
+        }
+
+        public ICommand LoadedCommand { get; set; }
+
+        public void Init()
         {
             using var db = new AppDbContext();
 
@@ -81,13 +99,21 @@ namespace Process.ViewModel.Dashboard
                 }
             };
 
-            GoToCommand = new RelayParameterizedCommand(GoTo);
+            LoadBookList();
+            LoadLastToDos();
+            LoadWeather();
         }
 
-
         public List<QuickInfo> QuickInfos { get; set; }
+        public ObservableCollection<BookLogTopListItem> BookLogTopListItems { get; set; }
+        public ObservableCollection<ToDoLastItem> ToDoLastItems { get; set; }
+        public ObservableCollection<WeatherInfo> WeatherInfos { get; set; } = new ObservableCollection<WeatherInfo>();
+
+        public WeatherInfo TodayWeatherInfo { get; set; }
 
         public ICommand GoToCommand { get; set; }
+        public ICommand SetIsDoneCommand { get; set; }
+        public ICommand SetIsImportantCommand { get; set; }
 
         public void GoTo(object sender)
         {
@@ -101,5 +127,111 @@ namespace Process.ViewModel.Dashboard
             }
         }
 
+        public void LoadBookList()
+        {
+            using var db = new AppDbContext();
+
+            BookLogTopListItems = db.BookLogBooks.Select(bookLogBook => new BookLogTopListItem
+            {
+                BookLogBook = bookLogBook,
+                BookLogAuthor = db.BookLogAuthors.SingleOrDefault(x => x.Id == bookLogBook.BookLogAuthorId),
+                ReviewRate = db.BookLogReviews.Where(x => x.BookLogBookId == bookLogBook.Id)
+                .Sum(x => x.Rate) < 1 ? 1 : db.BookLogReviews.Where(x => x.BookLogBookId == bookLogBook.Id)
+                .Sum(x => x.Rate) / db.BookLogReviews
+                .Where(x => x.BookLogBookId == bookLogBook.Id).Count() < 1 ? 1 : db.BookLogReviews
+                .Where(x => x.BookLogBookId == bookLogBook.Id).Count(),
+            })
+            .OrderByDescending(x => x.ReviewRate)
+            .Take(10)
+            .ToObservableCollection();
+        }
+
+        public void LoadLastToDos()
+        {
+            using var db = new AppDbContext();
+
+            ToDoLastItems = db.ToDos.Select(toDo => new ToDoLastItem 
+            { 
+                ToDo= toDo,
+                ToDoList = db.ToDoLists.First(x => x.Id == toDo.ToDoListId)
+            })
+            .Take(20)
+            .ToObservableCollection();
+        }
+
+        /// <summary>
+        /// Set Is Done ToDo
+        /// </summary>
+        /// <param name="sender"></param>
+        public void SetIsDone(object sender)
+        {
+            var toDo = ((sender as CheckBox).DataContext as Models.ToDo.ToDoLastItem).ToDo;
+
+            using var db = new AppDbContext();
+
+            db.ToDos.Update(toDo);
+            db.SaveChanges();
+        }
+
+        /// <summary>
+        /// Set Is Important ToDo
+        /// </summary>
+        /// <param name="sender"></param>
+        public void SetIsImportant(object sender)
+        {
+            var toDo = ((sender as CheckBox).DataContext as Models.ToDo.ToDoLastItem).ToDo;
+
+            using var db = new AppDbContext();
+            db.ToDos.Update(toDo);
+            db.SaveChanges();
+        }
+
+        public void LoadWeather()
+        {
+            var apiKey = "75fc9d9bee173a6dba9280c61565ab9e";
+            var countryCode = "TR";
+            var city = "Istanbul";
+            var respose = Helpers.HttpHelpers.Get($"https://api.openweathermap.org/data/2.5/forecast?q={city},{countryCode}&units=metric&appid={apiKey}");
+
+            if (!string.IsNullOrEmpty(respose))
+            {
+                var Temperatures = JsonConvert.DeserializeObject<Temperatures>(respose);
+
+                if (Temperatures.List.Length > 0)
+                {
+                    var weatherInfos = new ObservableCollection<WeatherInfo>();
+
+                    var days = Temperatures.List.GroupBy(x => x.DtTxt.Date);
+
+                    foreach (var day in days)
+                    {
+                        weatherInfos.Add(new WeatherInfo
+                        {
+                            Date = day.First().DtTxt.Date,
+                            Temperature = day.First().Main.Temp,
+                            Description = day.First().Weather.FirstOrDefault().Description,
+                            Weather = Settings.CultureInfo.TextInfo.ToTitleCase(GetEnumMemberAttrValue(day.First().Weather[0].Description)),
+                            Temperatures = days.SelectMany(group => group).ToList()
+                        });
+                    }
+
+                    WeatherInfos = weatherInfos;
+                    TodayWeatherInfo = weatherInfos.FirstOrDefault(x => x.Date == DateTime.Now.Date);
+                }
+            }
+        }
+
+        public string GetEnumMemberAttrValue<T>(T enumVal)
+        {
+            var enumType = typeof(T);
+            var memInfo = enumType.GetMember(enumVal.ToString());
+            var attr = memInfo.FirstOrDefault()?.GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
+            if (attr != null)
+            {
+                return attr.Value;
+            }
+
+            return null;
+        }
     }
 }

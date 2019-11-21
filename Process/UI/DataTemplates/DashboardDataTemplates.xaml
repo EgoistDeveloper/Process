@@ -2,7 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Process.UI.Controls"
                     xmlns:pages="clr-namespace:Process.UI.Pages"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:converters="clr-namespace:Process.UI.Converters">
+    
+    <converters:IntMinusConverter x:Key="IntMinusConverter"/>
+    <converters:WeatherDescriptionToIconConverter x:Key="WeatherDescriptionToIconConverter"/>
 
     <DataTemplate x:Key="QuickInfoDataTemplate">
         <controls:InfoCard IconData="{Binding IconData}"
@@ -15,5 +19,136 @@
                            IconHeight="40" IconWidth="40"
                            Height="90" Width="290"/>
     </DataTemplate>
-    
+
+    <DataTemplate x:Key="BookLogTopListItemDataTemplate">
+        <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Author Image -->
+            <Border CornerRadius="50"
+                    Margin="5" Height="50" Width="50">
+                <Border.Background>
+                    <ImageBrush Stretch="Fill" ImageSource="{Binding BookLogAuthor.Image}"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="7" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
+                </Border.Effect>
+            </Border>
+
+            <!-- Book Image -->
+            <Border Grid.Column="1" CornerRadius="10"
+                    Margin="5" Height="50" Width="50"
+                    HorizontalAlignment="Left">
+                <Border.Background>
+                    <ImageBrush Stretch="Fill" ImageSource="{Binding BookLogBook.Image}"/>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="7" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
+                </Border.Effect>
+            </Border>
+
+            <!-- Title -->
+            <TextBlock Grid.Column="2" Margin="10"
+                       Text="{Binding BookLogBook.Title}" 
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource Grey700Brush}"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Left"/>
+
+            <!-- Rate -->
+            <Border Grid.Column="3"
+                    Width="35" Height="35"
+                    Padding="5"
+                    CornerRadius="3"
+                    Background="{Binding ReviewRate, Converter={StaticResource IntToColorConverter}}">
+                <TextBlock Text="{Binding ReviewRate}"
+                           Foreground="{StaticResource Grey50Brush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="20"/>
+            </Border>
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LastToDoItemDataTemplate">
+        <Grid Height="25" 
+              Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth, 
+                      Converter={StaticResource IntMinusConverter}, ConverterParameter=30}"
+              Margin="10 5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox Foreground="Black"
+                      Content="{Binding ToDo.ToDoContent}"
+                      IsChecked="{Binding ToDo.IsDone}"
+                      Style="{DynamicResource ToDoCheckBox}"
+                      HorizontalAlignment="Left">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsDoneCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type pages:BasePage}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+
+            <CheckBox Grid.Column="1" 
+                      Margin="5 0 0 0"
+                      Style="{StaticResource StarCheckBox}"
+                      IsChecked="{Binding ToDo.IsImportant}"
+                      VerticalAlignment="Center">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsImportantCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type pages:BasePage}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WeatherDayDataTemplate">
+        <Grid Margin="20" Width="120" 
+              Background="{StaticResource WhiteBrush}"
+              ToolTip="{Binding Weather}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Path Grid.Row="1"
+                      Data="{Binding Description, Converter={StaticResource WeatherDescriptionToIconConverter}}"
+                      Height="30" Width="30"
+                      Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"/>
+
+                <TextBlock Grid.Column="1" 
+                           Text="{Binding Temperature, StringFormat={}{0:0}°C, FallbackValue=99}"
+                           FontSize="20"
+                           VerticalAlignment="Center"/>
+
+            </Grid>
+
+            <TextBlock Grid.Row="1"
+                       Text="{Binding Date.Date, StringFormat={}{0:dd.MM-dddd}, FallbackValue=12.12.2012}"
+                       FontSize="13" Margin="25 5 5 5"
+                       HorizontalAlignment="Left"
+                       Foreground="{StaticResource BlueGrey200Brush}"/>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

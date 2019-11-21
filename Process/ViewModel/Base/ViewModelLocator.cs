@@ -17,6 +17,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Process.ViewModel.App;
 using Process.ViewModel.Book;
+using Process.ViewModel.Calendar;
 using Process.ViewModel.Dashboard;
 using Process.ViewModel.Diary;
 using Process.ViewModel.Diet;
@@ -57,6 +58,8 @@ namespace Process.ViewModel.Base
                 SimpleIoc.Default.Register<BookLogViewModel>();
                 SimpleIoc.Default.Register<NotebookViewModel>();
                 SimpleIoc.Default.Register<DiaryLogOfDayViewModel>();
+                SimpleIoc.Default.Register<CalendarViewModel>();
+                SimpleIoc.Default.Register<SettingsViewModel>();                
             }
         }
 
@@ -152,6 +155,21 @@ namespace Process.ViewModel.Base
             get
             {
                 return ServiceLocator.Current.GetInstance<DiaryLogOfDayViewModel>();
+            }
+        }
+        public CalendarViewModel CalendarVM
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<CalendarViewModel>();
+            }
+        }
+
+        public SettingsViewModel SettingsVM
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsViewModel>();
             }
         }
 

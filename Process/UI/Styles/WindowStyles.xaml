@@ -5,25 +5,26 @@
     <converters:BooleanToBorderThicknessConverter x:Key="BooleanToBorderThicknessConverter" />
     <converters:MessageDialogIconConverter x:Key="MessageDialogIconConverter" />
 
-    <!-- Window Control Button -->
+    <!-- Window Control Button Base Style -->
     <Style x:Key="WindowControlButton" TargetType="{x:Type Button}">
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Padding" Value="8" />
+        <Setter Property="Margin" Value="2" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="Foreground" Value="{StaticResource BlueGrey500Brush}" />
-
-        <Setter Property="LayoutTransform">
-            <Setter.Value>
-                <ScaleTransform ScaleX="1.5" />
-            </Setter.Value>
-        </Setter>
-
+        <Setter Property="Foreground" Value="{StaticResource BluePurpleGradientBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{TemplateBinding Content}" />
+                    <Border Padding="{TemplateBinding Padding}" 
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="25"
+                            Height="35" Width="35">
+                        <Path x:Name="Icon"
+                              Stretch="UniformToFill"
+                              Height="15" Width="15"
+                              Fill="{TemplateBinding Foreground}"
+                              Data="{TemplateBinding Tag}" 
+                              SnapsToDevicePixels="True"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -31,21 +32,42 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BlueGrey600Brush}" />
+                <Setter Property="Background" Value="{StaticResource Blue50Brush}" />
             </Trigger>
         </Style.Triggers>
-
     </Style>
 
     <!-- Window Close Button -->
     <Style TargetType="{x:Type Button}" x:Key="WindowCloseButton" BasedOn="{StaticResource WindowControlButton}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="Red" />
+                <Setter Property="Background" Value="{StaticResource Red50Brush}" />
                 <Setter Property="Foreground" Value="{StaticResource BlueGrey600Brush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <!-- Window Minimize Button -->
+    <Style x:Key="WindowMinimizeButton" TargetType="{x:Type Button}" BasedOn="{StaticResource WindowControlButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Padding="{TemplateBinding Padding}" 
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="30"
+                            Height="35" Width="35">
+                        <Path x:Name="Icon"
+                              Stretch="UniformToFill"
+                              Height="3" Width="18"
+                              Fill="{TemplateBinding Foreground}"
+                              Data="{Binding Source={StaticResource WindowMinimize}, Path=Data}" 
+                              SnapsToDevicePixels="True"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <!-- MainWindow Style -->
     <Style x:Key="MainWindowStyle" TargetType="{x:Type Window}">
@@ -56,7 +78,7 @@
         <Setter Property="MinHeight" Value="{Binding WindowMinimumHeight}"/>
         <Setter Property="Background" Value="{StaticResource SoftBlueGreyBrush}"/>
         <Setter Property="Height" Value="750"/>
-        <Setter Property="Width" Value="1420"/>
+        <Setter Property="Width" Value="1435"/>
         <Setter Property="Title" Value="Life Log"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -108,62 +130,24 @@
                                         <ColumnDefinition Width="Auto" />
                                         <!-- Title -->
                                         <ColumnDefinition Width="*" />
-                                        <!-- Windows Button -->
+                                        <!-- Windows Control Buttons -->
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Icon -->
-                                    <!--<Button Command="{Binding MenuCommand}">
-                                            <Image Source="/Images/Logo/logo-small.png" />
-                                        </Button>-->
-
-                                    <!-- Title -->
-                                    <!--<Viewbox Grid.Column="0" Grid.ColumnSpan="3" Margin="5">
-                                        <StackPanel>
-                                            <TextBlock FontFamily="{StaticResource LatoBold}" FontSize="{StaticResource FontSizeLarge}" Margin="0,0,0,-5">
-                                                    <Run Text="W" Foreground="{StaticResource WordOrangeBrush}" />-->
-                                    <!--
-                                                    -->
-                                    <!--<Run Text="O" Foreground="{StaticResource WordBlueBrush}" />-->
-                                    <!--
-                                                    -->
-                                    <!--<Run Text="R" Foreground="{StaticResource WordRedBrush}" />-->
-                                    <!--
-                                                    -->
-                                    <!--<Run Text="D" Foreground="{StaticResource WordGreenBrush}" />
-                                            </TextBlock>
-                                            <TextBlock Text="by fasetto" Foreground="{StaticResource ForegroundDarkBrush}" TextAlignment="Center" />
-                                        </StackPanel>
-                                    </Viewbox>-->
-
-                                    <!-- Window Buttons -->
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <Button Command="{Binding MinimizeCommand}" Style="{StaticResource WindowControlButton}" Content="_" />
-                                        <Button Command="{Binding MaximizeCommand}" Style="{StaticResource WindowControlButton}" Content="[ ]" />
-                                        <Button Command="{Binding CloseCommand}" Style="{StaticResource WindowCloseButton}" Content="X" />
+                                    <!-- Window Control Buttons -->
+                                    <StackPanel Grid.Column="2" 
+                                                Orientation="Horizontal"
+                                                Margin="5 0">
+                                        <Button Command="{Binding MinimizeCommand}" 
+                                                Style="{StaticResource WindowMinimizeButton}"/>
+                                        <Button Command="{Binding MaximizeCommand}" 
+                                                Style="{StaticResource WindowControlButton}"
+                                                Tag="{Binding Source={StaticResource WindowMaximize}, Path=Data}"/>
+                                        <Button Command="{Binding CloseCommand}" 
+                                                Style="{StaticResource WindowCloseButton}"
+                                                Tag="{Binding Source={StaticResource WindowClose}, Path=Data}"/>
                                     </StackPanel>
                                 </Grid>
-
-                                <!-- No Internet Connection Bar -->
-                                <!--<Border 
-                                        local:AnimateSlideInFromTopProperty.Value="{Binding 
-                                            ApplicationViewModel.ServerReachable, 
-                                            Source={x:Static local:ViewModelLocator.Instance},
-                                            Converter={local:BooleanInvertConverter}}"
-                                        Background="{StaticResource WordOrangeBrush}"
-                                        Grid.Row="1"
-                                        Padding="10"
-                                        Panel.ZIndex="1">
-
-                                    <Label 
-                                            HorizontalAlignment="Center"
-                                            FontFamily="{StaticResource LatoBold}"
-                                            Foreground="{StaticResource ForegroundLightBrush}"
-                                            >
-                                        No Internet connection. Please check your network
-                                    </Label>
-
-                                </Border>-->
 
                                 <!-- Page Content -->
                                 <Border Grid.RowSpan="3" Padding="{Binding InnerContentPadding}" ClipToBounds="True">
@@ -172,12 +156,6 @@
                             </Grid>
                         </Grid>
                     </Border>
-
-                    <ControlTemplate.Triggers>
-                        <!--<Trigger Property="ResizeMode" Value="CanResizeWithGrip">
-                            <Setter TargetName="WindowResizeGrip" Property="Visibility" Value="Visible" />
-                        </Trigger>-->
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -246,11 +224,18 @@
                                     <!-- Title -->
                                     <TextBlock Grid.Column="1" Text="{Binding Title}" TextAlignment="Center" VerticalAlignment="Center"/>
 
-                                    <!-- Window Buttons -->
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <Button Command="{Binding MinimizeCommand}" Style="{StaticResource WindowControlButton}" Content="_" />
-                                        <Button Command="{Binding MaximizeCommand}" Style="{StaticResource WindowControlButton}" Content="[ ]" />
-                                        <Button Command="{Binding CloseCommand}" Style="{StaticResource WindowCloseButton}" Content="X" />
+                                    <!-- Window Control Buttons -->
+                                    <StackPanel Grid.Column="2" 
+                                                Orientation="Horizontal"
+                                                Margin="5 0">
+                                        <Button Command="{Binding MinimizeCommand}" 
+                                                Style="{StaticResource WindowMinimizeButton}"/>
+                                        <Button Command="{Binding MaximizeCommand}" 
+                                                Style="{StaticResource WindowControlButton}"
+                                                Tag="{Binding Source={StaticResource WindowMaximize}, Path=Data}"/>
+                                        <Button Command="{Binding CloseCommand}" 
+                                                Style="{StaticResource WindowCloseButton}"
+                                                Tag="{Binding Source={StaticResource WindowClose}, Path=Data}"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -336,11 +321,18 @@
                                         <TextBlock Text="{Binding Title}" TextAlignment="Center" VerticalAlignment="Center"/>
                                     </StackPanel>
 
-                                    <!-- Window Buttons -->
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <Button Command="{Binding MinimizeCommand}" Style="{StaticResource WindowControlButton}" Content="_" />
-                                        <Button Command="{Binding MaximizeCommand}" Style="{StaticResource WindowControlButton}" Content="[ ]" />
-                                        <Button Command="{Binding CloseCommand}" Style="{StaticResource WindowCloseButton}" Content="X" />
+                                    <!-- Window Control Buttons -->
+                                    <StackPanel Grid.Column="2" 
+                                                Orientation="Horizontal"
+                                                Margin="5 0">
+                                        <Button Command="{Binding MinimizeCommand}" 
+                                                Style="{StaticResource WindowMinimizeButton}"/>
+                                        <Button Command="{Binding MaximizeCommand}" 
+                                                Style="{StaticResource WindowControlButton}"
+                                                Tag="{Binding Source={StaticResource WindowMaximize}, Path=Data}"/>
+                                        <Button Command="{Binding CloseCommand}" 
+                                                Style="{StaticResource WindowCloseButton}"
+                                                Tag="{Binding Source={StaticResource WindowClose}, Path=Data}"/>
                                     </StackPanel>
                                 </Grid>
 

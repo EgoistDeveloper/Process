@@ -14,9 +14,9 @@ using System.Windows.Input;
 
 namespace Process.ViewModel.Book
 {
-    public class BookLogViewModel : ViewModelBase
+    public class SettingsViewModel : ViewModelBase
     {
-        public BookLogViewModel()
+        public SettingsViewModel()
         {
             AddBookLogBookCommand = new RelayCommand(p => AddBookLogBook());
             AddBookLogReviewCommand = new RelayCommand(p => AddBookLogReview());

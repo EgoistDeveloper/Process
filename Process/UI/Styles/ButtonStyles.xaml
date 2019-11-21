@@ -387,7 +387,6 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="LeftIconRedButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource LightGreyBrush}"/>

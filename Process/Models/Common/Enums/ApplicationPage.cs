@@ -11,6 +11,6 @@
         PocketBank = 7,
         BookLog = 8,
         Notebook = 9,
-        Lyrics = 10
+        Calendar = 10
     }
 }

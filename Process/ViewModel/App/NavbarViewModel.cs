@@ -56,8 +56,8 @@ namespace Process.ViewModel.App
                 },
                 new NavbarItem()
                 {
-                    ApplicationPage = ApplicationPage.Lyrics,
-                    IconData = (System.Windows.Application.Current.FindResource("PlaylistMusic") as Path)?.Data
+                    ApplicationPage = ApplicationPage.Calendar,
+                    IconData = (System.Windows.Application.Current.FindResource("CalendarMultipleCheck") as Path)?.Data
                 }
             };
 

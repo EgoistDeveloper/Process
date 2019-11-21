@@ -50,6 +50,8 @@ namespace Process.Helpers
 
                 case ApplicationPage.Notebook:
                     return new Notebook();
+                case ApplicationPage.Calendar:
+                    return new Calendar();
                 default:
                     // Debugger.Break();
                     return null;

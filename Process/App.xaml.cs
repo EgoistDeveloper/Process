@@ -29,7 +29,7 @@ namespace Process
             base.OnStartup(e);
             ApplicationSetup();
 
-            ViewModelApplication.GoToPage(ApplicationPage.DiaryLog);
+            ViewModelApplication.GoToPage(ApplicationPage.Dashboard);
 
             Current.MainWindow = new MainWindow();
             Current.MainWindow.DataContext = new WindowViewModel(Current.MainWindow);

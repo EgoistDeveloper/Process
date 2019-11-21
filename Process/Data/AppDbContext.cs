@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
-using System.Windows.Media.Imaging;
 using Process.Models.Diet;
 using Process.Models.Pocket;
 using Process.Models.Book;
@@ -12,6 +9,8 @@ using Process.Models.Notebook;
 using Process.Models.Workout;
 using Process.Models.ToDo;
 using Process.Models.Diary;
+using Process.Models.AppSetting;
+using Process.Models.Calendar;
 
 namespace Process.Data
 {
@@ -19,31 +18,8 @@ namespace Process.Data
     {
         public AppDbContext()
         {
-            //Database.Migrate();
+            Database.Migrate();
             if (!Database.EnsureCreated()) return;
-            //ToDoLists.Add(new ToDoList() { Title = "Gemini", LastUpdateDate = DateTime.Now.ToString() });
-
-            //WorkoutPlans.Add(new WorkoutPlan()
-            //{
-            //    Title = "rere",
-            //    AddedDate = DateTime.Now,
-            //    ExpireDate = DateTime.Now.AddDays(23).Date,
-            //});
-            //WorkoutPlans.Add(new WorkoutPlan()
-            //{
-            //    Title = "345345",
-            //    AddedDate = DateTime.Now,
-            //    ExpireDate = DateTime.Now.AddDays(23).Date,
-            //});
-            //WorkoutDays.Add(new WorkoutDay()
-            //{
-            //    WorkoutPlanId = 1,
-            //    Date = DateTime.Now.Date,
-            //    DayNumber = 1,
-            //    IsCompleted = false
-            //});
-
-            SaveChangesAsync();
         }
 
         #region Diary
@@ -68,13 +44,6 @@ namespace Process.Data
         //public DbSet<User> Users { get; set; }
         //public DbSet<Session> Sessions { get; set; }
         //public DbSet<LoginLog> LoginLogs { get; set; }
-
-        #endregion
-
-        #region Activity
-
-        //public DbSet<Activity> Activities { get; set; }
-        //public DbSet<ActivityLog> ActivityLogs { get; set; }
 
         #endregion
 
@@ -115,14 +84,6 @@ namespace Process.Data
 
         #endregion
 
-
-        //#region Lyrics
-
-        //public DbSet<LyricLog> LyricLogs { get; set; }
-        //public DbSet<LyricAlbumImage> LyricAlbumImages { get; set; }
-
-        //#endregion
-
         #region Notebook
 
         public DbSet<Notebook> Notebooks { get; set; }
@@ -138,6 +99,17 @@ namespace Process.Data
         public DbSet<BookLogGenre> BookLogGenres { get; set; }
         public DbSet<BookLogBookGenre> BookLogBookGenres { get; set; }
 
+        #endregion
+
+        #region AppSettings
+
+        public DbSet<AppSetting> AppSettings { get; set; }
+
+        #endregion
+
+        #region Calendar
+
+        public DbSet<CalendarLog> CalendarLogs { get; set; }
 
         #endregion
 
@@ -609,6 +581,15 @@ namespace Process.Data
             {
                 entity.HasKey(x => x.Id);
             });
+            #endregion
+
+            #region AppSetting
+
+            modelBuilder.Entity<AppSetting>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+            });
+
             #endregion
 
             base.OnModelCreating(modelBuilder);
