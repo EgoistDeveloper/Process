@@ -20,6 +20,8 @@ using Process.Models.ToDo;
 using Process.Helpers;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace Process.ViewModel.Dashboard
 {
@@ -108,8 +110,11 @@ namespace Process.ViewModel.Dashboard
         public ObservableCollection<BookLogTopListItem> BookLogTopListItems { get; set; }
         public ObservableCollection<ToDoLastItem> ToDoLastItems { get; set; }
         public ObservableCollection<WeatherInfo> WeatherInfos { get; set; } = new ObservableCollection<WeatherInfo>();
-
         public WeatherInfo TodayWeatherInfo { get; set; }
+
+        public SeriesCollection SeriesCollection { get; set; } = new SeriesCollection();
+        public List<string> Labels { get; set; } = new List<string>();
+        public Func<double, string> YFormatter { get; set; }
 
         public ICommand GoToCommand { get; set; }
         public ICommand SetIsDoneCommand { get; set; }
@@ -188,9 +193,9 @@ namespace Process.ViewModel.Dashboard
 
         public void LoadWeather()
         {
-            var apiKey = "75fc9d9bee173a6dba9280c61565ab9e";
-            var countryCode = "TR";
-            var city = "Istanbul";
+            var apiKey = ViewModelApplication.AppSettings.OpenWeatherApiKey;
+            var countryCode = ViewModelApplication.AppSettings.OpenWeatherCountry;
+            var city = ViewModelApplication.AppSettings.OpenWeatherCity;
             var respose = Helpers.HttpHelpers.Get($"https://api.openweathermap.org/data/2.5/forecast?q={city},{countryCode}&units=metric&appid={apiKey}");
 
             if (!string.IsNullOrEmpty(respose))
@@ -199,20 +204,33 @@ namespace Process.ViewModel.Dashboard
 
                 if (Temperatures.List.Length > 0)
                 {
+                    SeriesCollection = new SeriesCollection
+                    {
+                        new LineSeries
+                        {
+                            Title = "Temperature",
+                            Values = new ChartValues<double> { }
+                        }
+                    };
+
                     var weatherInfos = new ObservableCollection<WeatherInfo>();
 
                     var days = Temperatures.List.GroupBy(x => x.DtTxt.Date);
 
                     foreach (var day in days)
                     {
+                        var firstDayItem = day.First();
                         weatherInfos.Add(new WeatherInfo
                         {
-                            Date = day.First().DtTxt.Date,
-                            Temperature = day.First().Main.Temp,
-                            Description = day.First().Weather.FirstOrDefault().Description,
+                            Date = firstDayItem.DtTxt.Date,
+                            Temperature = firstDayItem.Main.Temp,
+                            Description = firstDayItem.Weather.FirstOrDefault().Description,
                             Weather = Settings.CultureInfo.TextInfo.ToTitleCase(GetEnumMemberAttrValue(day.First().Weather[0].Description)),
                             Temperatures = days.SelectMany(group => group).ToList()
                         });
+
+                        SeriesCollection[0].Values.Add(firstDayItem.Main.Temp);
+                        Labels.Add(firstDayItem.DtTxt.Date.ToShortDateString());
                     }
 
                     WeatherInfos = weatherInfos;

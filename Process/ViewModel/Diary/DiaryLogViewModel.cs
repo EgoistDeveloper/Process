@@ -159,9 +159,9 @@ namespace Process.ViewModel.Diary
                     days.Add(new DiaryDay
                     {
                         IsEnabled = true,
-                        IsDefault = date != DateTime.Now ? false : true,
+                        IsDefault = date != DateTime.Now.Date ? false : true,
                         Date = date,
-                        DayStatus = date != DateTime.Now ? DayStatus.EmptyDay : DayStatus.EmptyToday
+                        DayStatus = date != DateTime.Now.Date ? DayStatus.EmptyDay : DayStatus.EmptyToday
                     });
                 }
 
@@ -182,7 +182,7 @@ namespace Process.ViewModel.Diary
                     });
                 }
 
-                Months.Add(new DiaryMonth 
+                months.Add(new DiaryMonth 
                 { 
                     MonthNumber = i,
                     MonthName = Settings.CultureInfo.DateTimeFormat.GetMonthName(i),

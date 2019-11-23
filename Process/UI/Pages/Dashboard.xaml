@@ -8,7 +8,8 @@
       xmlns:diaryControls="clr-namespace:Process.UI.Controls.Diary"
       xmlns:controls="clr-namespace:Process.UI.Controls"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-      mc:Ignorable="d" 
+                xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+                mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="900"
       DataContext="{Binding DashboardVM, Source={StaticResource Locator}}">
     <i:Interaction.Triggers>
@@ -27,7 +28,8 @@
             </Grid.RowDefinitions>
 
             <Border Background="{StaticResource WhiteBrush}"
-                    Margin="10" Height="270">
+                    Margin="10" Height="270"
+                    CornerRadius="5">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
                 </Border.Effect>
@@ -92,9 +94,18 @@
                     <TabControl Grid.Column="1">
                         <TabItem Header="Next Days" Tag="{Binding Source={StaticResource WeatherHazy}, Path=Data}">
                             <ListView ItemTemplate="{StaticResource WeatherDayDataTemplate}" 
-                                      ItemsSource="{Binding WeatherInfos}"/>
+                                      ItemsSource="{Binding WeatherInfos}"
+                                      Tag="There is no weather data"/>
                         </TabItem>
-                        <TabItem Header="Graphs" Tag="{Binding Source={StaticResource WeatherSunsetUp}, Path=Data}">
+                        <TabItem Header="Graph" Tag="{Binding Source={StaticResource WeatherSunsetUp}, Path=Data}">
+                            <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" >
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Temperature"></lvc:Axis>
+                                </lvc:CartesianChart.AxisY>
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Title="Dates" Labels="{Binding Labels}"></lvc:Axis>
+                                </lvc:CartesianChart.AxisX>
+                            </lvc:CartesianChart>
                         </TabItem>
                     </TabControl>
                 </Grid>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows.Media.Imaging;
 
 namespace Process.Models.Workout
 {
@@ -16,5 +17,7 @@ namespace Process.Models.Workout
         [Required]
         public string WorkoutTitle { get; set; }
         public string WorkoutDescription { get; set; }
+        public BitmapImage Image { get; set; }
+        public string VideoLink { get; set; }
     }
 }

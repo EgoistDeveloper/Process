@@ -341,6 +341,7 @@
     <Compile Include="Models\Calendar\CalendarDay.cs" />
     <Compile Include="Models\Calendar\CalendarMonth.cs" />
     <Compile Include="Models\Calendar\Entities\CalendarLog.cs" />
+    <Compile Include="Models\Common\AppSettings.cs" />
     <Compile Include="Models\Common\DateTime\Day.cs" />
     <Compile Include="Models\Common\DateTime\Month.cs" />
     <Compile Include="Models\Common\DateTime\Week.cs" />
@@ -456,6 +457,9 @@
     <Compile Include="UI\Converters\ThisMonthUnderlineConverter.cs" />
     <Compile Include="UI\Converters\UnitToShortConverter.cs" />
     <Compile Include="UI\Converters\WeatherDescriptionToIconConverter.cs" />
+    <Compile Include="UI\Pages\AppSettings.xaml.cs">
+      <DependentUpon>AppSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Pages\Base\BasePage.cs" />
     <Compile Include="UI\Pages\Base\PageHost.xaml.cs">
       <DependentUpon>PageHost.xaml</DependentUpon>
@@ -481,9 +485,6 @@
     <Compile Include="UI\Pages\PocketBank.xaml.cs">
       <DependentUpon>PocketBank.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Pages\Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\Pages\ToDoLog.xaml.cs">
       <DependentUpon>ToDoLog.xaml</DependentUpon>
     </Compile>
@@ -494,9 +495,11 @@
       <DependentUpon>WorkoutLog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\App\ApplicationViewModel.cs" />
+    <Compile Include="ViewModel\App\AppSettingsViewModel.cs" />
     <Compile Include="ViewModel\App\DeleteDialogViewModel.cs" />
     <Compile Include="ViewModel\App\NavbarViewModel.cs" />
     <Compile Include="ViewModel\App\MessageDialogViewModel.cs" />
+    <Compile Include="ViewModel\App\RightSidebarViewModel.cs" />
     <Compile Include="ViewModel\App\WelcomeViewModel.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\Base\EventArgs.cs" />
@@ -733,6 +736,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Pages\AppSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Pages\Base\PageHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -762,10 +769,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Pages\PocketBank.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Pages\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -875,7 +878,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Book\Enums\" />
-    <Folder Include="Models\Book\Factory\" />
     <Folder Include="Models\Book\Interfaces\" />
     <Folder Include="Models\Diet\Factory\" />
     <Folder Include="Models\Diet\Interfaces\" />

@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using Process.Data;
+using Process.Helpers;
 using Process.Models.Workout;
 using static Process.Helpers.ObservableCollectionHelper;
 
@@ -23,7 +26,7 @@ namespace Process.ViewModel.Workout
         public WorkoutInputViewModel(Window window) : base(window)
         {
             mWindow = window;
-            WindowMinimumHeight = 350;
+            WindowMinimumHeight = 750;
             WindowMinimumWidth = 600;
             Title = "Add Workout";
 
@@ -36,6 +39,7 @@ namespace Process.ViewModel.Workout
 
             AddWorkoutCommand = new RelayCommand(p => AddWorkout());
             DeleteWorkoutCommand = new RelayParameterizedCommand(DeleteWorkout);
+            AddImageCommand = new RelayCommand(p => AddImage());
 
             LoadWorkouts();
         }
@@ -44,6 +48,7 @@ namespace Process.ViewModel.Workout
 
         public ICommand AddWorkoutCommand { get; set; }
         public ICommand DeleteWorkoutCommand { get; set; }
+        public ICommand AddImageCommand { get; set; }
 
         #endregion
 
@@ -51,9 +56,11 @@ namespace Process.ViewModel.Workout
 
         public string WorkoutTitle { get; set; }
         public string WorkoutDescription { get; set; }
+        public string VideoLink { get; set; }
         public ObservableCollection<Models.Workout.Workout> Workouts { get; set; } = new ObservableCollection<Models.Workout.Workout>();
         public List<BodyPartItem> BodyPartItems { get; set; }
         public BodyPartItem SelectedBodyPartItem { get; set; }
+        public BitmapImage Image { get; set; }
 
         #endregion
 
@@ -78,7 +85,9 @@ namespace Process.ViewModel.Workout
                 AddedDate = DateTime.Now,
                 TargetBodyPart = SelectedBodyPartItem.BodyPart,
                 WorkoutTitle = WorkoutTitle,
-                WorkoutDescription = WorkoutDescription
+                WorkoutDescription = WorkoutDescription,
+                Image = Image,
+                VideoLink = VideoLink
             };
 
             using var db = new AppDbContext();
@@ -88,6 +97,8 @@ namespace Process.ViewModel.Workout
             Workouts.Insert(0, workout);
             WorkoutTitle = "";
             WorkoutDescription = "";
+            VideoLink = "";
+            Image = null;
         }
 
         public void DeleteWorkout(object sender)
@@ -100,6 +111,21 @@ namespace Process.ViewModel.Workout
             db.SaveChanges();
 
             Workouts.Remove(workout);
+        }
+
+        public void AddImage()
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "Select Workout Image",
+                Filter = Settings.ImageFilter,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Image = openFileDialog.FileName.PathToBitmapImage();
+            }
         }
 
         #endregion

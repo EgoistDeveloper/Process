@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Process.Dialogs.Workout"
         xmlns:dialog="clr-namespace:Process.Dialogs"
         mc:Ignorable="d"
-        Height="450" Width="800">
+        Height="700" Width="800">
 
     <Window.Resources>
         <Style TargetType="{x:Type local:WorkoutInputDialog}" BasedOn="{StaticResource BasicWindowBaseStyle}"/>
@@ -49,11 +49,26 @@
             <TextBox Text="{Binding WorkoutDescription}" 
                      Height="40" Width="200" Margin="10" Tag="Description"/>
 
+            <TextBox Text="{Binding VideoLink}" 
+                     Height="40" Width="200" Margin="10" Tag="Description"/>
+
             <Button Content="Save Target"
                     Margin="10" Width="200" 
                     Style="{StaticResource LeftIconButtonStyle}"
                     Tag="{Binding Source={StaticResource BullseyeArrow}, Path=Data}"
                     Command="{Binding AddWorkoutCommand}"/>
+            <GroupBox Header="Image">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="{Binding Image}" Margin="10"/>
+
+                    <Button Grid.Row="1" Margin="10" Width="400"
+                            Content="Add Image" HorizontalAlignment="Center"
+                            Style="{StaticResource LeftIconButtonStyle}"
+                            Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                            Command="{Binding AddImageCommand}"/>
+                </StackPanel>
+            </GroupBox>
+
         </StackPanel>
     </Grid>
 

@@ -31,7 +31,6 @@ namespace Process.ViewModel.Book
             });
 
             AddImageCommand = new RelayCommand(p => AddImage());
-
         }
 
         #region Commands

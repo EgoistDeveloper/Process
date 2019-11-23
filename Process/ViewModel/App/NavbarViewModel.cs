@@ -2,12 +2,13 @@
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using GalaSoft.MvvmLight;
 using Process.Models.Common;
 using static Process.DI.DI;
 
 namespace Process.ViewModel.App
 {
-    public class NavbarViewModel : BaseViewModel
+    public class NavbarViewModel : ViewModelBase
     {
         public NavbarViewModel()
         {
@@ -60,7 +61,6 @@ namespace Process.ViewModel.App
                     IconData = (System.Windows.Application.Current.FindResource("CalendarMultipleCheck") as Path)?.Data
                 }
             };
-
 
             GoToCommand = new RelayParameterizedCommand(GoTo);
         }

@@ -11,6 +11,8 @@
         PocketBank = 7,
         BookLog = 8,
         Notebook = 9,
-        Calendar = 10
+        Calendar = 10,
+        Repeats = 11,
+        AppSettings = 12
     }
 }

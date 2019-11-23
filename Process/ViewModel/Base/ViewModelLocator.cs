@@ -59,7 +59,9 @@ namespace Process.ViewModel.Base
                 SimpleIoc.Default.Register<NotebookViewModel>();
                 SimpleIoc.Default.Register<DiaryLogOfDayViewModel>();
                 SimpleIoc.Default.Register<CalendarViewModel>();
-                SimpleIoc.Default.Register<SettingsViewModel>();                
+                SimpleIoc.Default.Register<SettingsViewModel>();
+                SimpleIoc.Default.Register<RightSidebarViewModel>();
+                SimpleIoc.Default.Register<AppSettingsViewModel>();
             }
         }
 
@@ -170,6 +172,22 @@ namespace Process.ViewModel.Base
             get
             {
                 return ServiceLocator.Current.GetInstance<SettingsViewModel>();
+            }
+        }
+
+        public RightSidebarViewModel RightSidebarVM
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<RightSidebarViewModel>();
+            }
+        }
+
+        public AppSettingsViewModel AppSettingsVM
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<AppSettingsViewModel>();
             }
         }
 

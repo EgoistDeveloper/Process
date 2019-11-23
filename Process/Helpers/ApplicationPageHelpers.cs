@@ -1,14 +1,5 @@
 ﻿using Process.Models.Common;
 using Process.UI.Pages;
-using Process.ViewModel.App;
-using Process.ViewModel.Book;
-using Process.ViewModel.Dashboard;
-using Process.ViewModel.Diary;
-using Process.ViewModel.Diet;
-using Process.ViewModel.Notebook;
-using Process.ViewModel.PocketBank;
-using Process.ViewModel.ToDo;
-using Process.ViewModel.Workout;
 
 namespace Process.Helpers
 {
@@ -50,11 +41,15 @@ namespace Process.Helpers
 
                 case ApplicationPage.Notebook:
                     return new Notebook();
+
                 case ApplicationPage.Calendar:
                     return new Calendar();
+
+                case ApplicationPage.AppSettings:
+                    return new UI.Pages.AppSettings();
+
                 default:
-                    // Debugger.Break();
-                    return null;
+                    return new WelcomePage();
             }
         }
 

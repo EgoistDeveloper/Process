@@ -251,6 +251,9 @@ namespace Process.Data
                         c => (BodyPart)Enum.Parse(typeof(BodyPart), c))
                     .IsUnicode(false);
                 entity.HasIndex(x => x.WorkoutTitle).IsUnique();
+                entity.Property(x => x.Image)
+                    .HasConversion(c => c.ImageToByteArray(),
+                        c => c.ByteArrayToBitmapImage());
             });
 
             modelBuilder.Entity<WorkoutPlan>(entity =>

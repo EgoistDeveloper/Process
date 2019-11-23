@@ -1,4 +1,5 @@
 ﻿using Dna;
+using Process.Models.Common;
 using Process.ViewModel.App;
 
 namespace Process.DI
@@ -12,5 +13,7 @@ namespace Process.DI
         /// A shortcut to access the <see cref="ApplicationViewModel"/>
         /// </summary>
         public static ApplicationViewModel ViewModelApplication => Framework.Service<ApplicationViewModel>();
+
+        public static AppSettings AppSettings => Framework.Service<AppSettings>();
     }
 }
