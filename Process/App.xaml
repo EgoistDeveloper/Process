@@ -25,9 +25,8 @@
             <converters:BoolToReverseVisibilityConverter x:Key="BoolToReverseVisibilityConverter" />
             <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
             <converters:UnitToShortConverter x:Key="UnitToShortConverter" />
-            <converters:WeatherDescriptionToIconConverter x:Key="WeatherDescriptionToIconConverter"/>
 
-
+            
             <!-- Resource Dictionaries -->
             <ResourceDictionary.MergedDictionaries>
                 <!-- Colors -->

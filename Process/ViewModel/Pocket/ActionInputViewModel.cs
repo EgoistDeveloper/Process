@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Process.Data;
@@ -36,11 +31,22 @@ namespace Process.ViewModel.PocketBank
             LoadPocketCategories();
         }
 
+        #region Commands
+
+        public ICommand AddCategoryCommand { get; set; }
+
+        #endregion
+
+        #region Properties
+
         public ObservableCollection<PocketCategory> PocketCategories { get; set; } = new ObservableCollection<PocketCategory>();
         public PocketCategory SelectedPocketCategory { get; set; }
 
         public PocketAction PocketAction { get; set; }
 
+        #endregion
+
+        #region Methods
 
         public void SaveAction()
         {
@@ -53,7 +59,16 @@ namespace Process.ViewModel.PocketBank
             db.SaveChanges();
         }
 
-        public ICommand AddCategoryCommand { get; set; }
+        public void LoadPocketCategories()
+        {
+            using var db = new AppDbContext();
+            PocketCategories = db.PocketCategories.ToObservableCollection();
+            SelectedPocketCategory = PocketCategories.FirstOrDefault();
+        }
+
+        #endregion
+
+        #region Command Methods
 
         public void AddCategory()
         {
@@ -71,11 +86,6 @@ namespace Process.ViewModel.PocketBank
             dialog.ShowDialogWindow(new CategoryInputViewModel(dialog), mWindow);
         }
 
-        public void LoadPocketCategories()
-        {
-            using var db = new AppDbContext();
-            PocketCategories = db.PocketCategories.ToObservableCollection();
-            SelectedPocketCategory = PocketCategories.FirstOrDefault();
-        }
+        #endregion
     }
 }

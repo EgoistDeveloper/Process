@@ -1,16 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
 using Process.Data;
-using Process.Models.AppSetting;
 using Process.Models.Common;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.ComponentModel;
 
 namespace Process.ViewModel.App
 {
     /// <summary>
     /// The application state as a view model
     /// </summary>
-    public class ApplicationViewModel : BaseViewModel
+    public class ApplicationViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public ApplicationViewModel()
         {
@@ -46,6 +44,13 @@ namespace Process.ViewModel.App
 
             if (!different)
                 OnPropertyChanged(nameof(CurrentPage));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
         #endregion

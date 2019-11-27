@@ -224,8 +224,9 @@ namespace Process.ViewModel.Dashboard
                         {
                             Date = firstDayItem.DtTxt.Date,
                             Temperature = firstDayItem.Main.Temp,
-                            Description = firstDayItem.Weather.FirstOrDefault().Description,
-                            Weather = Settings.CultureInfo.TextInfo.ToTitleCase(GetEnumMemberAttrValue(day.First().Weather[0].Description)),
+                            //Description = firstDayItem.Weather.FirstOrDefault().Description,
+                            IconPath = $"http://openweathermap.org/img/wn/{firstDayItem.Weather.FirstOrDefault()?.Icon}@2x.png",
+                            Weather = Settings.CultureInfo.TextInfo.ToTitleCase(day.First().Weather[0].Description),
                             Temperatures = days.SelectMany(group => group).ToList()
                         });
 

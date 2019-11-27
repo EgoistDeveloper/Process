@@ -43,13 +43,23 @@ namespace Process.ViewModel.PocketBank
             LoadActions();
         }
 
-        public PocketInOut PocketInOut { get; set; }
+        #region Methods
 
+        public ICommand AddPocketActionCommand { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        public PocketInOut PocketInOut { get; set; }
         public List<PocketInOutTypeItem> PocketInOutTypeItems { get; set; }
         public PocketInOutTypeItem SelectedPocketInOutTypeItem { get; set; }
-        
         public ObservableCollection<PocketAction> PocketActions { get; set; } = new ObservableCollection<PocketAction>();
         public PocketAction SelectedPocketAction { get; set; }
+
+        #endregion
+
+        #region Methods
 
         public void SaveInOut()
         {
@@ -65,7 +75,16 @@ namespace Process.ViewModel.PocketBank
             }
         }
 
-        public ICommand AddPocketActionCommand { get; set; }
+        private void LoadActions()
+        {
+            using var db = new AppDbContext();
+            PocketActions = db.PocketActions.ToObservableCollection();
+            SelectedPocketAction = PocketActions.FirstOrDefault();
+        }
+
+        #endregion
+
+        #region Command Methods
 
         public void AddPocketAction()
         {
@@ -83,11 +102,6 @@ namespace Process.ViewModel.PocketBank
             dialog.ShowDialogWindow(new ActionInputViewModel(dialog), mWindow);
         }
 
-        private void LoadActions()
-        {
-            using var db = new AppDbContext();
-            PocketActions = db.PocketActions.ToObservableCollection();
-            SelectedPocketAction = PocketActions.FirstOrDefault();
-        }
+        #endregion
     }
 }

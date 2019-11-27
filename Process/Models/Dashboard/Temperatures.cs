@@ -142,7 +142,7 @@ namespace Process.Models.Dashboard
         public MainEnum Main { get; set; }
 
         [JsonProperty("description")]
-        public Description Description { get; set; }
+        public string Description { get; set; }
 
         [JsonProperty("icon")]
         public string Icon { get; set; }
@@ -173,7 +173,9 @@ namespace Process.Models.Dashboard
         [EnumMember(Value = "overcast clouds")]
         OvercastClouds,
         [EnumMember(Value = "scattered clouds")]
-        ScatteredClouds
+        ScatteredClouds,
+        [EnumMember(Value = "moderate rain")]
+        ModerateRain
     };
 
     public enum MainEnum { Clear, Clouds, Rain };

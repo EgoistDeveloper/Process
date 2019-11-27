@@ -21,7 +21,8 @@ namespace Process.ViewModel.App
             SaveSettingCommand = new RelayParameterizedCommand(SaveSetting);
 
             using var db = new AppDbContext();
-            AppSettings = db.AppSettings.ToObservableCollection();
+            AppSettings = db.AppSettings.OrderByDescending(x => x.IsEditable)
+            .ToObservableCollection();
         }
 
         public ICommand SaveSettingCommand { get; set; }

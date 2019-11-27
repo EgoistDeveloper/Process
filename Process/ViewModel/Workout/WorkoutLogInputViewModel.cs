@@ -21,7 +21,7 @@ namespace Process.ViewModel.Workout
 
             Title = $"Workout Log - Day: {workoutDayItem.WorkoutDay.Date.ToShortDateString()}";
 
-            WorkoutDayItem = workoutDayItem;
+            WorkoutDayItem = SetTargetIndex(workoutDayItem);
 
             SetIsWorkoutDoneCommand = new RelayParameterizedCommand(SetIsWorkoutDone);
             SetAllWorkoutsDoneCommand = new RelayCommand(p => SetAllWorkoutsDone());
@@ -66,6 +66,19 @@ namespace Process.ViewModel.Workout
             }
 
             db.SaveChanges();
+        }
+
+        public WorkoutDayItem SetTargetIndex(WorkoutDayItem workoutDayItem)
+        {
+            if (workoutDayItem.WorkoutTargetItems.Count > 0)
+            {
+                for (int i = 0; i < workoutDayItem.WorkoutTargetItems.Count; i++)
+                {
+                    workoutDayItem.WorkoutTargetItems[i].Index = (i + 1).ToString();
+                }
+            }
+
+            return workoutDayItem;
         }
 
         #endregion

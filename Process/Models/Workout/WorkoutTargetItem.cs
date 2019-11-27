@@ -8,6 +8,7 @@ namespace Process.Models.Workout
 {
     public class WorkoutTargetItem
     {
+        public string Index { get; set; }
         public WorkoutTarget WorkoutTarget { get; set; }
         public Workout Workout { get; set; }
         public WorkoutLog WorkoutLog { get; set; }

@@ -36,10 +36,15 @@ namespace Process.ViewModel.PocketBank
             });
         }
 
+        #region Properties
+
         public List<PocketCategoryPriorityItem> PocketCategoryPriorityItems { get; set; }
         public PocketCategoryPriorityItem SelectedPocketCategoryPriorityItem { get; set; }
-
         public PocketCategory PocketCategory { get; set; }
+
+        #endregion
+
+        #region Methods
 
         public void SaveCategory()
         {
@@ -51,5 +56,7 @@ namespace Process.ViewModel.PocketBank
             db.PocketCategories.Add(PocketCategory);
             db.SaveChanges();
         }
+
+        #endregion
     }
 }

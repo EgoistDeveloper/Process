@@ -28,7 +28,7 @@
             </Grid.RowDefinitions>
 
             <Border Background="{StaticResource WhiteBrush}"
-                    Margin="10" Height="270"
+                    Margin="10" Height="320"
                     CornerRadius="5">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".051" ShadowDepth="3" Direction="0"/>
@@ -72,17 +72,16 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Path Grid.Row="1"
-                                      Data="{Binding TodayWeatherInfo.Description, Converter={StaticResource WeatherDescriptionToIconConverter}}"
-                                      Height="40" Width="40"
-                                      Stretch="Uniform"
-                                      Fill="{StaticResource BlueGrey900Brush}"/>
+                                <Image Grid.Row="1"
+                                       Height="50" Width="50"
+                                       Stretch="UniformToFill"
+                                       SnapsToDevicePixels="True"
+                                       Source="{Binding TodayWeatherInfo.IconPath}"/>
 
                                 <TextBlock Grid.Column="1" 
-                                           Text="{Binding TodayWeatherInfo.Temperature, StringFormat={}{0:0}°C, FallbackValue=99}"
+                                           Text="{Binding TodayWeatherInfo.Temperature, StringFormat={}{0:0}°C, FallbackValue=--}"
                                            FontSize="40"
                                            VerticalAlignment="Center"/>
-
                             </Grid>
                             <TextBlock Grid.Row="1" 
                                        Text="{Binding TodayWeatherInfo.Weather, FallbackValue=Sunny, UpdateSourceTrigger=PropertyChanged}"
@@ -145,7 +144,8 @@
 
                         <ListView Grid.Row="1" Margin="0 20 0 20"
                                   ItemTemplate="{StaticResource BookLogTopListItemDataTemplate}" 
-                                  ItemsSource="{Binding BookLogTopListItems}"/>
+                                  ItemsSource="{Binding BookLogTopListItems}"
+                                  Tag="There is no book"/>
                     </Grid>
                 </Border>
 
@@ -172,7 +172,8 @@
                         <ListView Grid.Row="1" Margin="0 20 0 20"
                                   VerticalAlignment="Top"
                                   ItemTemplate="{StaticResource LastToDoItemDataTemplate}" 
-                                  ItemsSource="{Binding ToDoLastItems}"/>
+                                  ItemsSource="{Binding ToDoLastItems}"
+                                  Tag="There is no ToDo items"/>
                     </Grid>
                 </Border>
             </Grid>

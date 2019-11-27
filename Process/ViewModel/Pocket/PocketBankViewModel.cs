@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,10 +11,8 @@ using Process.Data;
 using Process.Dialogs.Pocket;
 using Process.Helpers;
 using Process.Models.Pocket;
-using Process.Models.Workout;
 using LiveCharts;
 using LiveCharts.Wpf;
-using Microsoft.EntityFrameworkCore;
 
 namespace Process.ViewModel.PocketBank
 {
@@ -29,15 +25,8 @@ namespace Process.ViewModel.PocketBank
 
             YFormatter = val => string.Format(CultureInfo.InvariantCulture, "{0:0.00}", val);
 
-
             LoadInOutItems();
         }
-
-        public ObservableCollection<PocketInOutItem> PocketInOutItems { get; set; } = new ObservableCollection<PocketInOutItem>();
-        public SeriesCollection SeriesCollection { get; set; }
-        public List<string> Labels { get; set; } = new List<string>();
-        public Func<double, string> YFormatter { get; set; }
-
 
         #region Commands
 
@@ -46,35 +35,16 @@ namespace Process.ViewModel.PocketBank
 
         #endregion
 
-        #region Command Methods
+        #region Properties
 
-        public void AddInOutLog()
-        {
-            var dialog = new InOutInputDialog();
+        public ObservableCollection<PocketInOutItem> PocketInOutItems { get; set; } = new ObservableCollection<PocketInOutItem>();
+        public SeriesCollection SeriesCollection { get; set; }
+        public List<string> Labels { get; set; } = new List<string>();
+        public Func<double, string> YFormatter { get; set; }
 
-            dialog.Closing += (sender, args) =>
-            {
-                if (dialog.DataContext is InOutInputViewModel vm && vm.PocketInOut.Id > 0)
-                {
-                    PocketInOutItems.Insert(0, LoadInOutItem(vm.PocketInOut.Id));
-                }
-            };
-
-            dialog.ShowDialogWindow(new InOutInputViewModel(dialog));
-        }
-
-        public void DeletePocketInOut(object sender)
-        {
-            if (sender == null || !(sender is Button button)) return;
-            if (!(button.DataContext is PocketInOutItem pocketInOutItem)) return;
-
-            using var db = new AppDbContext();
-            db.PocketInOuts.Remove(pocketInOutItem.PocketInOut);
-            db.SaveChanges();
-
-            PocketInOutItems.Remove(pocketInOutItem);
-        }
         #endregion
+
+        #region Methods
 
         private void LoadInOutItems()
         {
@@ -167,5 +137,38 @@ namespace Process.ViewModel.PocketBank
                 }
             }
         }
+
+        #endregion
+
+        #region Command Methods
+
+        public void AddInOutLog()
+        {
+            var dialog = new InOutInputDialog();
+
+            dialog.Closing += (sender, args) =>
+            {
+                if (dialog.DataContext is InOutInputViewModel vm && vm.PocketInOut.Id > 0)
+                {
+                    PocketInOutItems.Insert(0, LoadInOutItem(vm.PocketInOut.Id));
+                }
+            };
+
+            dialog.ShowDialogWindow(new InOutInputViewModel(dialog));
+        }
+
+        public void DeletePocketInOut(object sender)
+        {
+            if (sender == null || !(sender is Button button)) return;
+            if (!(button.DataContext is PocketInOutItem pocketInOutItem)) return;
+
+            using var db = new AppDbContext();
+            db.PocketInOuts.Remove(pocketInOutItem.PocketInOut);
+            db.SaveChanges();
+
+            PocketInOutItems.Remove(pocketInOutItem);
+        }
+
+        #endregion
     }
 }

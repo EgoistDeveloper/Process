@@ -36,23 +36,18 @@ namespace Process.ViewModel.ToDo
         /// </summary>
         private void AddOrUpdate()
         {
-            using var db = new AppDbContext();
-
-            if (string.IsNullOrWhiteSpace(ToDoListItem.ToDoList.Title))
+            if (!string.IsNullOrWhiteSpace(ToDoListItem.ToDoList.Title))
             {
-                if (ToDoListItem.ToDoList.Id > 0)
-                {
-                    db.ToDoLists.Update(ToDoListItem.ToDoList);
-                }
-                else
-                {
-                    ToDoListItem.ToDoList.LastUpdateDate = DateTime.Now;
+                using var db = new AppDbContext();
 
+                ToDoListItem.ToDoList.LastUpdateDate = DateTime.Now;
+
+                _ = ToDoListItem.ToDoList.Id > 0 ?
+                    db.ToDoLists.Update(ToDoListItem.ToDoList) :
                     db.ToDoLists.Add(ToDoListItem.ToDoList);
-                }
+
+                db.SaveChanges();
             }
-            
-            db.SaveChanges();
 
             mWindow.Close();
         }

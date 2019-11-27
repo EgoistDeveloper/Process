@@ -189,6 +189,7 @@
         </Setter>
     </Style>
 
+    <!-- Left Icon Button Style -->
     <Style x:Key="LeftIconButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource LightGreyBrush}"/>
@@ -288,6 +289,7 @@
         </Setter>
     </Style>
 
+    <!-- Left Icon Yellow Button Style -->
     <Style x:Key="LeftIconYellowButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource LightGreyBrush}"/>
@@ -387,6 +389,7 @@
         </Setter>
     </Style>
 
+    <!-- Left Icon Red Button Style -->
     <Style x:Key="LeftIconRedButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource LightGreyBrush}"/>
@@ -485,6 +488,7 @@
         </Setter>
     </Style>
 
+    <!-- Cross Button Style -->
     <Style x:Key="CrossButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource GreyBrush}"/>
@@ -538,6 +542,7 @@
         </Setter>
     </Style>
 
+    <!-- List Item Button Style -->
     <Style x:Key="ListItemButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource DarkGreyBrush}"/>
@@ -618,6 +623,7 @@
         </Setter>
     </Style>
 
+    <!-- Icon Button Style -->
     <Style x:Key="IconButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Foreground" Value="{StaticResource BlueGrey800Brush}"/>
@@ -637,7 +643,7 @@
                             CornerRadius="25">
                         <Path x:Name="Icon"
                                 Stretch="UniformToFill"
-                                Height="20" Width="20"
+                                Height="25" Width="24"
                                 Fill="{TemplateBinding Foreground}"
                                 Data="{TemplateBinding Tag}" 
                                 SnapsToDevicePixels="True"
@@ -652,7 +658,7 @@
                                     <Storyboard>
                                         <!-- Text Foreground -->
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.Background).Color" Storyboard.TargetName="border">
-                                            <EasingColorKeyFrame KeyTime="0:0:0.3" Value="{StaticResource Blue100}"/>
+                                            <EasingColorKeyFrame KeyTime="0:0:0.3" Value="{StaticResource Blue50}"/>
                                         </ColorAnimationUsingKeyFrames>
                                         <!-- Icon Fill -->
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Path.Fill).Color" Storyboard.TargetName="Icon">

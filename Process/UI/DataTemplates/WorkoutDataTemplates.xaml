@@ -8,6 +8,8 @@
     <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
     <converters:BoolToReverseVisibilityConverter x:Key="BoolToReverseVisibilityConverter" />
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converters:IntMinusConverter x:Key="IntMinusConverter"/>
+    <converters:IntToColorConverter x:Key="IntToColorConverter" />
 
     <!--#region Workouts and Targets -->
 
@@ -147,6 +149,7 @@
     <DataTemplate x:Key="WorkoutDayItemDataTemplate">
         <Grid Width="370" Margin="10 5 0 0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -157,26 +160,36 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock VerticalAlignment="Center">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="{}#Day-{0} ({1})">
-                        <Binding Path="WorkoutDay.DayNumber"/>
-                        <Binding Path="WorkoutDay.Date" StringFormat="d"/>
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+            <Grid>
+                <Border Width="35" Height="35"
+                        Padding="5"
+                        Opacity=".1"
+                        CornerRadius="35"/>
+                <TextBlock Text="{Binding WorkoutDay.DayNumber, StringFormat={}#{0}}"
+                            Foreground="{Binding WorkoutDay.DayNumber, Converter={StaticResource IntToColorConverter}}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="20"/>
+            </Grid>
 
-            <Button Grid.Column="1" 
+            <TextBlock Grid.Column="1" 
+                       Margin="10 0"
+                       VerticalAlignment="Center"
+                       Text="{Binding WorkoutDay.Date, StringFormat=d}"/>
+
+            <Button Grid.Column="2" 
                     Tag="{Binding Source={StaticResource Plus}, Path=Data}"
                     Style="{StaticResource ListItemButtonStyle}" 
                     IsEnabled="{Binding WorkoutDay.IsBreak, Converter={StaticResource ReverseBoolConverter}}"
                     Command="{Binding DataContext.AddWorkoutLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                    ToolTip="Add Progress"/>
 
-            <CheckBox Grid.Column="2" 
+            <CheckBox Grid.Column="3" 
                       Margin="5 0 0 0"
                       Style="{StaticResource CoffeeCheckBox}"
                       IsChecked="{Binding WorkoutDay.IsBreak}"
+                      IsEnabled="{Binding WorkoutDay.IsCompleted, Converter={StaticResource ReverseBoolConverter}}"
                       VerticalAlignment="Center">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
@@ -186,8 +199,7 @@
                 </i:Interaction.Triggers>
             </CheckBox>
 
-
-            <ProgressBar Grid.ColumnSpan="3" Grid.Row="1"
+            <ProgressBar Grid.ColumnSpan="4" Grid.Row="1"
                          Height="2"
                          Style="{StaticResource ProgressBarBaseStyle}"
                          Maximum="{Binding WorkoutTargetItems.Count, FallbackValue=1}"
@@ -393,50 +405,102 @@
 
     <!--#endregion -->
 
-
     <DataTemplate x:Key="WorkoutTargetListItemDataTemplate">
-        <Grid>
+        <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth, 
+                      Converter={StaticResource IntMinusConverter}, ConverterParameter=30}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="350" />
+                <ColumnDefinition Width="5*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Path Stretch="Uniform" Height="18" 
-                  Data="{Binding Source={StaticResource WeightLifter}, Path=Data}"
-                  Fill="{StaticResource DarkGreyBrush}" />
+            <CheckBox Style="{StaticResource ToDoIndexCheckBox}"
+                      Tag="{Binding Index}"
+                      IsChecked="{Binding WorkoutLog.IsCompleted}">
+                <CheckBox.ToolTip>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="1"
-                       Margin="15 0 0 0"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Foreground="{StaticResource DarkGreyBrush}">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0} ({1}) - {2}x{3}">
-                        <Binding Path="Workout.WorkoutTitle"/>
-                        <Binding Path="Workout.TargetBodyPart"/>
-                        <Binding Path="WorkoutTarget.RequiredSets"/>
-                        <Binding Path="WorkoutTarget.RequiredRepeats"/>
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+                        <TextBlock Margin="10 0 0 0"
+                        TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Workout.WorkoutTitle"/>
+                                    <Binding Path="Workout.TargetBodyPart"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
 
-            <TextBox Grid.Column="2" 
+                        <TextBlock Grid.Column="1" 
+                               Margin="10 0 0 0"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} x {1}">
+                                    <Binding Path="WorkoutTarget.RequiredSets"/>
+                                    <Binding Path="WorkoutTarget.RequiredRepeats"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+                </CheckBox.ToolTip>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="10 0 0 0"
+                        TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} ({1})">
+                                <Binding Path="Workout.WorkoutTitle"/>
+                                <Binding Path="Workout.TargetBodyPart"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock Grid.Column="1" 
+                               Margin="10 0 0 0"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} x {1}">
+                                <Binding Path="WorkoutTarget.RequiredSets"/>
+                                <Binding Path="WorkoutTarget.RequiredRepeats"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+            </CheckBox>
+
+            <TextBox Grid.Column="1" 
                      Text="{Binding WorkoutLog.Sets}" 
                      Height="40" Width="150" Margin="5"
                      IsEnabled="{Binding WorkoutLog.IsCompleted, Converter={StaticResource ReverseBoolConverter}, FallbackValue=True}"
                      helpers:TextBoxBehavior.SelectAllTextOnFocus="True"/>
 
-            <TextBox Grid.Column="3" 
+            <TextBox Grid.Column="2" 
                      Text="{Binding WorkoutLog.Repeats}" 
                      Height="40" Width="150" Margin="5"
                      IsEnabled="{Binding WorkoutLog.IsCompleted, Converter={StaticResource ReverseBoolConverter}, FallbackValue=True}"
                      helpers:TextBoxBehavior.SelectAllTextOnFocus="True"/>
 
-            <CheckBox Grid.Column="4" 
+            <CheckBox Grid.Column="3" 
                       Foreground="Black" 
                       IsChecked="{Binding WorkoutLog.IsCompleted}" 
                       VerticalAlignment="Center"
@@ -488,6 +552,5 @@
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
         </Grid>
     </DataTemplate>
-
 
 </ResourceDictionary>

@@ -99,7 +99,7 @@ namespace Process.ViewModel.Workout
                     })
                     .ToObservableCollection(),
 
-                WorkoutDayCompleteCount = db.WorkoutLogs.Count(x => x.WorkoutDayId == wDay.Id)
+                WorkoutDayCompleteCount = db.WorkoutLogs.Count(x => x.WorkoutDayId == wDay.Id && x.IsCompleted)
             }).ToObservableCollection(),
                 WorkoutPlanCompleteCount = db.WorkoutDays.Count(x => x.WorkoutPlanId == wPlan.Id && x.IsCompleted)
             })

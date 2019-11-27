@@ -591,6 +591,9 @@ namespace Process.Data
             modelBuilder.Entity<AppSetting>(entity =>
             {
                 entity.HasKey(x => x.Id);
+                entity.Property(x => x.IsEditable)
+                    .HasConversion(c => Convert.ToInt32(c),
+                        c => Convert.ToBoolean(c));
             });
 
             #endregion

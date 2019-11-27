@@ -23,12 +23,9 @@ namespace Process.Dialogs
 
             ShowDialog();
 
-            if (Owner != null)
+            if (Owner != null && Owner.Effect != null)
             {
-                Owner.Effect = new BlurEffect()
-                {
-                    Radius = 0
-                };
+                Owner.Effect = null;
             }
         }
     }

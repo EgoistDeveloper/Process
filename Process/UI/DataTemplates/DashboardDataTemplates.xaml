@@ -6,8 +6,7 @@
                     xmlns:converters="clr-namespace:Process.UI.Converters">
     
     <converters:IntMinusConverter x:Key="IntMinusConverter"/>
-    <converters:WeatherDescriptionToIconConverter x:Key="WeatherDescriptionToIconConverter"/>
-
+    
     <DataTemplate x:Key="QuickInfoDataTemplate">
         <controls:InfoCard IconData="{Binding IconData}"
                            InfoText1="{Binding InfoText1}"
@@ -130,14 +129,12 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Path Grid.Row="1"
-                      Data="{Binding Description, Converter={StaticResource WeatherDescriptionToIconConverter}}"
-                      Height="30" Width="30"
-                      Stretch="Uniform"
-                      Fill="{StaticResource BlueGrey600Brush}"/>
+                <Image Height="50" Width="50"
+                       Stretch="Uniform"
+                       Source="{Binding IconPath}"/>
 
                 <TextBlock Grid.Column="1" 
-                           Text="{Binding Temperature, StringFormat={}{0:0}°C, FallbackValue=99}"
+                           Text="{Binding Temperature, StringFormat={}{0:0}°C, FallbackValue=--}"
                            FontSize="20"
                            VerticalAlignment="Center"/>
 

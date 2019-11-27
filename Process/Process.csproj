@@ -456,7 +456,6 @@
     <Compile Include="UI\Converters\SubstringConverter.cs" />
     <Compile Include="UI\Converters\ThisMonthUnderlineConverter.cs" />
     <Compile Include="UI\Converters\UnitToShortConverter.cs" />
-    <Compile Include="UI\Converters\WeatherDescriptionToIconConverter.cs" />
     <Compile Include="UI\Pages\AppSettings.xaml.cs">
       <DependentUpon>AppSettings.xaml</DependentUpon>
     </Compile>
@@ -501,7 +500,6 @@
     <Compile Include="ViewModel\App\MessageDialogViewModel.cs" />
     <Compile Include="ViewModel\App\RightSidebarViewModel.cs" />
     <Compile Include="ViewModel\App\WelcomeViewModel.cs" />
-    <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\Base\EventArgs.cs" />
     <Compile Include="ViewModel\Base\EventRaiser.cs" />
     <Compile Include="ViewModel\Base\RelayCommand.cs" />
@@ -516,9 +514,6 @@
     <Compile Include="ViewModel\Calendar\CalendarLogViewModel.cs" />
     <Compile Include="ViewModel\Calendar\CalendarViewModel.cs" />
     <Compile Include="ViewModel\Dashboard\DashboardViewModel.cs" />
-    <Compile Include="ViewModel\Dialog\BaseDialogViewModel.cs" />
-    <Compile Include="ViewModel\Dialog\DialogWindowViewModel.cs" />
-    <Compile Include="ViewModel\Dialog\MessageBoxDialogViewModel.cs" />
     <Compile Include="ViewModel\Diary\AddDiaryLogViewModel.cs" />
     <Compile Include="ViewModel\Diary\DiaryLogOfDayViewModel.cs" />
     <Compile Include="ViewModel\Diary\DiaryLogPreviewViewModel.cs" />
