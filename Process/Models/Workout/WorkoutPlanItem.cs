@@ -14,5 +14,8 @@ namespace Process.Models.Workout
         public ObservableCollection<WorkoutDayItem> WorkoutDayItems { get; set; } = new ObservableCollection<WorkoutDayItem>();
 
         public WorkoutResultItem WorkoutResultItem { get; set; }
+
+        public long PlanNote { get; set; }
+        public long PlanTarget { get; set; }
     }
 }

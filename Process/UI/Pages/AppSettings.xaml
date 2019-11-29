@@ -14,10 +14,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ListView ItemsSource="{Binding AppSettings}"
-                  ItemTemplate="{StaticResource AppSettingsItemDataTemplate}"
-                  Tag="There is no setting"
-                  VerticalAlignment="Top"/>
+        <TabControl>
+            <TabItem Header="User Settings" 
+                     Tag="{Binding Source={StaticResource ShieldAccountOutline}, Path=Data}">
+                <ListView ItemsSource="{Binding UserSettings}"
+                          ItemTemplate="{StaticResource AppSettingsItemDataTemplate}"
+                          Tag="There is no user settings"
+                          VerticalAlignment="Top"/>
+            </TabItem>
+            <TabItem Header="App Settings" 
+                     Tag="{Binding Source={StaticResource Airplay}, Path=Data}">
+                <ListView ItemsSource="{Binding AppSettings}"
+                          ItemTemplate="{StaticResource AppSettingsItemDataTemplate}"
+                          Tag="There is no app settings"
+                          VerticalAlignment="Top"/>
+
+            </TabItem>
+        </TabControl>
 
         <Button Grid.Row="1" Margin="10" 
                 Content="Apply" HorizontalAlignment="Right"

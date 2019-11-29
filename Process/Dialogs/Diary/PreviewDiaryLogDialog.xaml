@@ -23,6 +23,6 @@
                       CornerRadius="0" GlassFrameThickness="0"/>
     </WindowChrome.WindowChrome>
 
-    <markdig:MarkdownViewer Markdown="{Binding HistoryLog.LogContent}"/>
+    <markdig:MarkdownViewer Markdown="{Binding DiaryHistoryLog.LogContent}"/>
 
 </dialog:DialogWindow>

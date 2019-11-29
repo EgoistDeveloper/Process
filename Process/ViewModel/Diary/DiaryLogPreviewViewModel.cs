@@ -14,15 +14,12 @@ namespace Process.ViewModel.Diary
         /// </summary>
         /// <param name="window">Parent window</param>
         /// <param name="diaryHistoryLog">DiaryHistoryLog</param>
-        public DiaryLogPreviewViewModel(Window window, object diaryHistoryLog) : base(window)
+        public DiaryLogPreviewViewModel(Window window, DiaryHistoryLog diaryHistoryLog) : base(window)
         {
             mWindow = window;
 
-            if (diaryHistoryLog != null && diaryHistoryLog is DiaryHistoryLog historyLog)
-            {
-                HistoryLog = historyLog;
-                Title = historyLog.AddedDate.ToString();
-            }
+            DiaryHistoryLog = diaryHistoryLog;
+            Title = diaryHistoryLog.AddedDate.ToString();
 
             OpenHyperlinkCommand = new RelayParameterizedCommand(OpenHyperlink);
         }
@@ -41,7 +38,7 @@ namespace Process.ViewModel.Diary
         /// <summary>
         /// Current history log
         /// </summary>
-        public DiaryHistoryLog HistoryLog { get; set; } = new DiaryHistoryLog();
+        public DiaryHistoryLog DiaryHistoryLog { get; set; } = new DiaryHistoryLog();
 
         #endregion
 

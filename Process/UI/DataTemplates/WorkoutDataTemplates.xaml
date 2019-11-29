@@ -10,6 +10,8 @@
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <converters:IntMinusConverter x:Key="IntMinusConverter"/>
     <converters:IntToColorConverter x:Key="IntToColorConverter" />
+    <converters:ExpiredDateToBoolConverter x:Key="ExpiredDateToBoolConverter" />
+    <converters:ExpiredDateToReverseBoolConverter x:Key="ExpiredDateToReverseBoolConverter" />
 
     <!--#region Workouts and Targets -->
 
@@ -147,64 +149,83 @@
 
     <!-- Workout Plan Days -->
     <DataTemplate x:Key="WorkoutDayItemDataTemplate">
-        <Grid Width="370" Margin="10 5 0 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid x:Name="WorkoutDayItemGrid" 
+                      Width="370" Margin="10 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-            <Grid>
-                <Border Width="35" Height="35"
-                        Padding="5"
-                        Opacity=".1"
-                        CornerRadius="35"/>
-                <TextBlock Text="{Binding WorkoutDay.DayNumber, StringFormat={}#{0}}"
-                            Foreground="{Binding WorkoutDay.DayNumber, Converter={StaticResource IntToColorConverter}}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="20"/>
-            </Grid>
+                    <Grid>
+                        <Border Width="35" Height="35"
+                                Padding="5"
+                                Opacity=".1"
+                                CornerRadius="35"/>
+                        <TextBlock Text="{Binding WorkoutDay.DayNumber, StringFormat={}#{0} - }"
+                                   Foreground="{Binding WorkoutDay.DayNumber, Converter={StaticResource IntToColorConverter}}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"/>
+                    </Grid>
 
-            <TextBlock Grid.Column="1" 
-                       Margin="10 0"
-                       VerticalAlignment="Center"
-                       Text="{Binding WorkoutDay.Date, StringFormat=d}"/>
+                    <TextBlock Grid.Column="1" 
+                               Margin="10 0"
+                               VerticalAlignment="Center"
+                               Text="{Binding WorkoutDay.Date, StringFormat=d.MM.yyyy - dddd}"/>
 
-            <Button Grid.Column="2" 
-                    Tag="{Binding Source={StaticResource Plus}, Path=Data}"
-                    Style="{StaticResource ListItemButtonStyle}" 
-                    IsEnabled="{Binding WorkoutDay.IsBreak, Converter={StaticResource ReverseBoolConverter}}"
-                    Command="{Binding DataContext.AddWorkoutLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
-                    ToolTip="Add Progress"/>
+                    <Button Grid.Column="2" 
+                            Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                            Style="{StaticResource ListItemButtonStyle}" 
+                            IsEnabled="{Binding WorkoutDay.IsBreak, Converter={StaticResource ReverseBoolConverter}}"
+                            Command="{Binding DataContext.AddWorkoutLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                            ToolTip="Add Progress"/>
 
-            <CheckBox Grid.Column="3" 
-                      Margin="5 0 0 0"
-                      Style="{StaticResource CoffeeCheckBox}"
-                      IsChecked="{Binding WorkoutDay.IsBreak}"
-                      IsEnabled="{Binding WorkoutDay.IsCompleted, Converter={StaticResource ReverseBoolConverter}}"
-                      VerticalAlignment="Center">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsBreakCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                    <CheckBox Grid.Column="3" 
+                              Margin="5 0 0 0"
+                              Style="{StaticResource CoffeeCheckBox}"
+                              IsChecked="{Binding WorkoutDay.IsBreak}"
+                              IsEnabled="{Binding WorkoutDay.IsCompleted, Converter={StaticResource ReverseBoolConverter}}"
+                              VerticalAlignment="Center">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding DataContext.SetIsBreakCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
                                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </CheckBox>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </CheckBox>
 
-            <ProgressBar Grid.ColumnSpan="4" Grid.Row="1"
-                         Height="2"
-                         Style="{StaticResource ProgressBarBaseStyle}"
-                         Maximum="{Binding WorkoutTargetItems.Count, FallbackValue=1}"
-                         Value="{Binding WorkoutDayCompleteCount, FallbackValue=0}"/>
+                    <ProgressBar Grid.ColumnSpan="4" Grid.Row="1"
+                                 Height="2"
+                                 Style="{StaticResource ProgressBarBaseStyle}"
+                                 Maximum="{Binding WorkoutTargetItems.Count, FallbackValue=1}"
+                                 Value="{Binding WorkoutDayCompleteCount, FallbackValue=0}"/>
+                </Grid>
+            <TextBlock x:Name="PassedText" 
+                       Text="Passed" 
+                       FontWeight="Bold"
+                       Foreground="{StaticResource BlueGrey300Brush}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Visibility="Collapsed"/>
         </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding WorkoutDay.Date, 
+                                   Converter={StaticResource ExpiredDateToBoolConverter}, 
+                                   ConverterParameter=2}" Value="True">
+                <Setter TargetName="WorkoutDayItemGrid" Property="IsEnabled" Value="False"/>
+                <Setter TargetName="WorkoutDayItemGrid" Property="Opacity" Value=".4"/>
+                <Setter TargetName="PassedText" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
 
     <!-- Workout Plans -->
@@ -228,7 +249,6 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2*"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <Grid>
@@ -237,21 +257,35 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock VerticalAlignment="Top"
-                                       HorizontalAlignment="Left"
-                                       TextAlignment="Left"
-                                       FontSize="46"
-                                       Margin="10 0 0 0"
-                                       TextWrapping="WrapWithOverflow"
-                                       Foreground="{StaticResource SoftBlueGreyBrush}"
-                                       Opacity=".4">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0}/{1}">
-                                        <Binding Path="WorkoutPlanCompleteCount"/>
-                                        <Binding Path="WorkoutDayItems.Count" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding PlanNote}" 
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="46"
+                                           Margin="10 0 0 0"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="1" 
+                                           Text="points" 
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="20"
+                                           Margin="10 0 0 10"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+                            </Grid>
 
                             <StackPanel Grid.Column="1" Margin="0 10 0 0"
                                         Orientation="Vertical" 
@@ -279,54 +313,35 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Grid.Row="1" 
-                                   Margin="10"
-                                   Text="{Binding WorkoutPlan.Title}" 
-                                   VerticalAlignment="Bottom"
-                                   TextAlignment="Left"
-                                   FontSize="16"
-                                   TextWrapping="WrapWithOverflow"
-                                   Foreground="{StaticResource SoftBlueGreyBrush}">
-                            <TextBlock.ToolTip>
-                                <TextBlock>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="10"
+                                       Text="{Binding WorkoutPlan.Title}" 
+                                       VerticalAlignment="Bottom"
+                                       TextAlignment="Left"
+                                       FontSize="16"
+                                       TextWrapping="WrapWithOverflow"
+                                       TextDecorations="Underline"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock>
                                     <Run Text="{Binding WorkoutPlan.AddedDate, StringFormat={}Added Date: {0}}"/>
                                     <LineBreak/>
                                     <Run Text="{Binding WorkoutPlan.ExpireDate, StringFormat={}Expire Date: {0}}"/>
                                     <LineBreak/>
                                     <Run Text="{Binding WorkoutPlan.Description, StringFormat={}Note: {0}}"/>
-                                </TextBlock>
-                            </TextBlock.ToolTip>
-                        </TextBlock>
-
-                        <ProgressBar Grid.Row="2" Height="10"
-                                     Background="{StaticResource SnowWhiteBrush}"
-                                     Foreground="{StaticResource LightBlueBrush}"
-                                     Maximum="{Binding WorkoutDayItems.Count}"
-                                     Value="{Binding WorkoutPlanCompleteCount}"/>
-                    </Grid>
-                </Border>
-
-                <!-- Expired Header -->
-                <Border Background="{StaticResource YellowBrush}" CornerRadius="5 5 0 0" 
-                        Visibility="{Binding IsExpired, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock VerticalAlignment="Top"
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" 
+                                       VerticalAlignment="Top"
                                        HorizontalAlignment="Left"
                                        TextAlignment="Left"
-                                       FontSize="46"
-                                       Margin="10 0 0 0"
+                                       FontSize="26"
+                                       Margin="10 0"
                                        TextWrapping="WrapWithOverflow"
                                        Foreground="{StaticResource SoftBlueGreyBrush}"
                                        Opacity=".4">
@@ -337,6 +352,54 @@
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Expired Header -->
+                <Border Background="{StaticResource YellowBrush}" CornerRadius="5 5 0 0" 
+                        Visibility="{Binding IsExpired, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding PlanNote}" 
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="46"
+                                           Margin="10 0 0 0"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="1" 
+                                           Text="points" 
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="20"
+                                           Margin="10 0 0 10"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+                            </Grid>
 
                             <StackPanel Grid.Column="1" Margin="0 10 0 0"
                                         Orientation="Vertical" 
@@ -366,35 +429,50 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Grid.Row="1" 
-                                   Margin="10"
-                                   Text="{Binding WorkoutPlan.Title}" 
-                                   VerticalAlignment="Bottom"
-                                   TextAlignment="Left"
-                                   FontSize="16"
-                                   TextWrapping="WrapWithOverflow"
-                                   Foreground="{StaticResource SoftBlueGreyBrush}">
-                            <TextBlock.ToolTip>
-                                <TextBlock>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="10"
+                                       Text="{Binding WorkoutPlan.Title}" 
+                                       VerticalAlignment="Bottom"
+                                       TextAlignment="Left"
+                                       FontSize="16"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock>
                                     <Run Text="{Binding WorkoutPlan.AddedDate, StringFormat={}Added Date: {0}}"/>
                                     <LineBreak/>
                                     <Run Text="{Binding WorkoutPlan.ExpireDate, StringFormat={}Expire Date: {0}}"/>
                                     <LineBreak/>
                                     <Run Text="{Binding WorkoutPlan.Description, StringFormat={}Note: {0}}"/>
-                                </TextBlock>
-                            </TextBlock.ToolTip>
-                        </TextBlock>
-
-                        <ProgressBar Grid.Row="2" Height="10"
-                                     Background="{StaticResource SnowWhiteBrush}"
-                                     Foreground="{StaticResource LightYellowBrush}"
-                                     Maximum="{Binding WorkoutDayItems.Count}"
-                                     Value="{Binding WorkoutPlanCompleteCount}"/>
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" 
+                                       VerticalAlignment="Top"
+                                       HorizontalAlignment="Left"
+                                       TextAlignment="Left"
+                                       FontSize="26"
+                                       Margin="10 0"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}"
+                                       Opacity=".4">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="WorkoutPlanCompleteCount"/>
+                                        <Binding Path="WorkoutDayItems.Count" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid>
                     </Grid>
                 </Border>
 
                 <!-- Days List -->
-                <ListView Grid.Row="2" Margin="0 10"
+                <ListView Grid.Row="1" Margin="0 10"
                           ItemTemplate="{StaticResource WorkoutDayItemDataTemplate}"
                           ItemsSource="{Binding WorkoutDayItems}"
                           VerticalAlignment="Top"

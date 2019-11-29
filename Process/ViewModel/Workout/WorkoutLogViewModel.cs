@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using LiveCharts;
+using LiveCharts.Wpf;
+using Microsoft.EntityFrameworkCore;
 using Process.Data;
 using Process.Dialogs;
 using Process.Dialogs.Workout;
+using Process.Models.Common;
 using Process.Models.Workout;
 using Process.ViewModel.App;
 using static Process.Helpers.ObservableCollectionHelper;
@@ -25,7 +31,10 @@ namespace Process.ViewModel.Workout
             ShowTargetLogGraphCommand = new RelayParameterizedCommand(ShowTargetLogGraph);
             ShowMeasurementsCommand = new RelayParameterizedCommand(ShowMeasurements);
             SetIsBreakCommand = new RelayParameterizedCommand(SetIsBreak);
+            YearChangedCommand = new RelayCommand(p => LoadWorkoutPlans());
 
+
+            LoadYears();
             LoadWorkoutPlans();
         }
 
@@ -39,16 +48,49 @@ namespace Process.ViewModel.Workout
         public ICommand ShowTargetLogGraphCommand { get; set; }
         public ICommand ShowMeasurementsCommand { get; set; }
         public ICommand SetIsBreakCommand { get; set; }
+        public ICommand YearChangedCommand { get; set; }
 
         #endregion
 
         #region Public Properties
 
         public ObservableCollection<WorkoutPlanItem> WorkoutPlanItems { get; set; } = new ObservableCollection<WorkoutPlanItem>();
+        public SeriesCollection YearNotesGraph { get; set; } = new SeriesCollection();
+        public List<string> Labels { get; set; } = new List<string>();
+        public Func<double, string> YFormatter { get; set; }
 
+        /// <summary>
+        /// Selected year
+        /// </summary>
+        public Year TargetYear { get; set; } = new Year();
+
+        /// <summary>
+        /// List of years
+        /// </summary>
+        public ObservableCollection<Year> Years { get; set; } = new ObservableCollection<Year>();
         #endregion
 
         #region Methods
+
+        public async Task LoadYears()
+        {
+            using var db = new AppDbContext();
+
+            Years = db.WorkoutPlans
+            .GroupBy(x => x.AddedDate.Year)
+            .Select(x => new Year { YearNumber = x.Key })
+            .ToObservableCollection();
+
+            if (Years.Count == 0)
+            {
+                Years.Add(new Year 
+                {
+                    YearNumber = DateTime.Now.Year
+                });
+            }
+
+            TargetYear = Years.First();
+        }
 
         /// <summary>
         /// Load all workout plans
@@ -56,7 +98,10 @@ namespace Process.ViewModel.Workout
         private void LoadWorkoutPlans()
         {
             using var db = new AppDbContext();
-            WorkoutPlanItems = db.WorkoutPlans.Select(wPlan => new WorkoutPlanItem
+
+            var workoutPlanItems = db.WorkoutPlans
+            .Where(wPlan => EF.Functions.Like(wPlan.AddedDate.Year.ToString(), TargetYear.YearNumber.ToString()))
+            .Select(wPlan => new WorkoutPlanItem
             {
                 WorkoutPlan = wPlan,
                 IsExpired = wPlan.ExpireDate < DateTime.Now,
@@ -105,6 +150,24 @@ namespace Process.ViewModel.Workout
             })
             .OrderByDescending(wPlan => wPlan.WorkoutPlan.Id)
             .ToObservableCollection();
+
+            foreach (var planItem in workoutPlanItems)
+            {
+                // current plan note
+                planItem.PlanNote = planItem.WorkoutDayItems
+                .Where(x => !x.WorkoutDay.IsBreak && x.WorkoutDayCompleteCount > 0)
+                .Sum(x => x.WorkoutDayCompleteCount);
+
+                // target plan note
+                planItem.PlanTarget = planItem.WorkoutDayItems
+                .Where(x => !x.WorkoutDay.IsBreak && x.WorkoutDay.IsCompleted)
+                .Count() *
+                planItem.WorkoutDayItems.First().WorkoutTargetItems.Count();
+            }
+
+            WorkoutPlanItems = workoutPlanItems;
+
+            LoadYearNotesGraph();
         }
 
         /// <summary>
@@ -145,6 +208,31 @@ namespace Process.ViewModel.Workout
                     }).ToObservableCollection(),
                 WorkoutPlanCompleteCount = db.WorkoutDays.Count(x => x.IsCompleted)
             }).Single();
+        }
+
+        private void LoadYearNotesGraph()
+        {
+            Labels = new List<string>();
+            YearNotesGraph = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title = "Plan Note",
+                    Values = new ChartValues<long> { }
+                },
+                new ColumnSeries
+                {
+                    Title = "Plan Target",
+                    Values = new ChartValues<long> { }
+                }
+            };
+
+            foreach (var workoutPlanItems in WorkoutPlanItems)
+            {
+                YearNotesGraph[0].Values.Add(workoutPlanItems.PlanNote);
+                YearNotesGraph[1].Values.Add(workoutPlanItems.PlanTarget);
+                Labels.Add(workoutPlanItems.WorkoutPlan.Title);
+            }
         }
 
         #endregion

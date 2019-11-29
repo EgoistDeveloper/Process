@@ -202,7 +202,8 @@ namespace Process.ViewModel.Diary
             using var db = new AppDbContext();
 
             // diary logs
-            var diaryLogs = db.DiaryLogs.Where(x => EF.Functions.Like(x.Date.Year.ToString(), TargetYear.YearNumber.ToString()))
+            var diaryLogs = db.DiaryLogs
+            .Where(x => EF.Functions.Like(x.Date.Year.ToString(), TargetYear.YearNumber.ToString()))
             .Select(x => new DiaryLog
             {
                 Id = x.Id,

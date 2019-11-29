@@ -9,9 +9,7 @@
         xmlns:locator="clr-namespace:Process.ViewModel.Base"
         xmlns:pages="clr-namespace:Process.UI.Pages.Base"
         xmlns:converters="clr-namespace:Process.UI.Converters"
-        mc:Ignorable="d"
-        ResizeMode="CanResizeWithGrip"
-        WindowStartupLocation="CenterScreen">
+        mc:Ignorable="d">
 
     <Window.Resources>
         <Style TargetType="{x:Type local:MainWindow}" BasedOn="{StaticResource MainWindowStyle}"/>

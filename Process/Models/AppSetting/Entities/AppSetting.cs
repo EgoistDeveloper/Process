@@ -14,5 +14,6 @@ namespace Process.Models.AppSetting
         public string Value { get; set; }
         [Required]
         public bool IsEditable { get; set; }
+        public string DefaultValue { get; set; }
     }
 }

@@ -50,7 +50,7 @@
 
                 <TextBox Grid.Column="1" 
                          Text="{Binding Value}" 
-                         Tag="{Binding SettingName}"
+                         Tag="{Binding DefaultValue, StringFormat='Default Value: {0}'}"
                          IsEnabled="{Binding IsEditable}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="LostFocus">

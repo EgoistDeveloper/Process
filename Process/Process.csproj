@@ -440,6 +440,8 @@
     <Compile Include="UI\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="UI\Converters\DayButonStyleConverter.cs" />
     <Compile Include="UI\Converters\EnumToStringConverter.cs" />
+    <Compile Include="UI\Converters\ExpiredDateToBoolConverter.cs" />
+    <Compile Include="UI\Converters\ExpiredDateToReverseBoolConverter.cs" />
     <Compile Include="UI\Converters\IntMinusConverter.cs" />
     <Compile Include="UI\Converters\IntToBoolConverter.cs" />
     <Compile Include="UI\Converters\IntToColorConverter.cs" />

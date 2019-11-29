@@ -21,13 +21,17 @@ namespace Process.ViewModel.App
             SaveSettingCommand = new RelayParameterizedCommand(SaveSetting);
 
             using var db = new AppDbContext();
-            AppSettings = db.AppSettings.OrderByDescending(x => x.IsEditable)
+            var Settings = db.AppSettings.OrderByDescending(x => x.IsEditable)
             .ToObservableCollection();
+
+            UserSettings = Settings.Where(x => x.IsEditable).ToObservableCollection();
+            AppSettings = Settings.Where(x => x.IsEditable == false).ToObservableCollection();
         }
 
         public ICommand SaveSettingCommand { get; set; }
 
-        public ObservableCollection<AppSetting> AppSettings { get; set; } = new ObservableCollection<AppSetting>();
+        public ObservableCollection<AppSetting> UserSettings { get; set; }
+        public ObservableCollection<AppSetting> AppSettings { get; set; }
 
         public void SaveSetting(object sender)
         {

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Process.Data;
+using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -228,6 +230,9 @@ namespace Process.Helpers
             var bottom = top + mWindow.Height;
             var right = left + mWindow.Width;
 
+            SaveWindowSize();
+            SaveWindowPosition();
+
             // Get window position/size in device pixels
             var windowTopLeft = new Point(left * mMonitorDpi.Value.DpiScaleX, top * mMonitorDpi.Value.DpiScaleX);
             var windowBottomRight = new Point(right * mMonitorDpi.Value.DpiScaleX, bottom * mMonitorDpi.Value.DpiScaleX);
@@ -274,6 +279,36 @@ namespace Process.Helpers
 
             // Save last dock position
             mLastDock = dock;
+        }
+
+        public void SaveWindowSize()
+        {
+            using var db = new AppDbContext();
+
+            var windowHeight = db.AppSettings.FirstOrDefault(x => x.SettingName == "WindowHeight");
+            windowHeight.Value = mWindow.Height.ToString();
+            db.AppSettings.Update(windowHeight);
+
+            var windowWidth = db.AppSettings.FirstOrDefault(x => x.SettingName == "WindowWidth");
+            windowWidth.Value = mWindow.Width.ToString();
+            db.AppSettings.Update(windowWidth);
+
+            db.SaveChanges();
+        }
+
+        public void SaveWindowPosition()
+        {
+            using var db = new AppDbContext();
+
+            var windowTop = db.AppSettings.FirstOrDefault(x => x.SettingName == "WindowTop");
+            windowTop.Value = mWindow.Top.ToString();
+            db.AppSettings.Update(windowTop);
+
+            var windowLeft = db.AppSettings.FirstOrDefault(x => x.SettingName == "WindowLeft");
+            windowLeft.Value = mWindow.Left.ToString();
+            db.AppSettings.Update(windowLeft);
+
+            db.SaveChanges();
         }
 
         #endregion

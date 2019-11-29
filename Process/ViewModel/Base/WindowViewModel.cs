@@ -20,7 +20,6 @@ namespace Process.ViewModel
             // Listen out for the window resizing
             mWindow.StateChanged += (sender, e) =>
             {
-                // Fire off events for all properties that are affected by a resize
                 WindowResized();
             };
 
@@ -63,13 +62,7 @@ namespace Process.ViewModel
                     mWindow.Top = -OuterMarginSize.Top;
             };
 
-
-            Title = "Awesome App";
-
-            //Thread.CurrentThread.IsBackground = true;
-
-            //dialogServiceI = dialogService;
-            ShowDiaryWindowCommand = new RelayParameterizedCommand(parameter => ShowDiaryWindow(parameter));
+            Title = "My Awesome App";
         }
 
         #region Private Member
@@ -239,15 +232,14 @@ namespace Process.ViewModel
             RaisePropertyChanged(nameof(WindowCornerRadius));
         }
 
-
         #endregion
 
-
-        public ICommand ShowDiaryWindowCommand { get; }
-
-        public void ShowDiaryWindow(object parameter)
+        public void SetWindowSizeAndPosition(double top, double left, double height, double width)
         {
-
+            mWindow.Top = top;
+            mWindow.Left = left;
+            mWindow.Height = height < WindowMinimumHeight ? WindowMinimumHeight : height;
+            mWindow.Width = width < WindowMinimumWidth ? WindowMinimumWidth : width;
         }
 
         public string Title { get; set; }
@@ -319,10 +311,5 @@ namespace Process.ViewModel
                 }));
             }
         }
-
-        //public object DisplayDate
-        //{
-        //    //get { throw new NotImplementedException(); }
-        //}
     }
 }

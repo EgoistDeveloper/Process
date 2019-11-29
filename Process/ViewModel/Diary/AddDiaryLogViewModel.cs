@@ -184,7 +184,7 @@ namespace Process.ViewModel.Diary
             if (!(button.DataContext is DiaryHistoryLog historyLog)) return;
 
             var dialog = new PreviewDiaryLogDialog();
-            dialog.ShowDialogWindow(new DiaryLogPreviewViewModel(dialog, dialog), mWindow);
+            dialog.ShowDialogWindow(new DiaryLogPreviewViewModel(dialog, historyLog), mWindow);
         }
 
         /// <summary>

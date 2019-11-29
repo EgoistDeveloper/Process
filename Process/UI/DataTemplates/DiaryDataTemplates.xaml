@@ -7,7 +7,7 @@
 
     <converters:IntToColorConverter x:Key="IntToColorConverter" />
     <converters:LengthToFontSizeConverter x:Key="LengthToFontSizeConverter" />
-
+    <converters:MultipleBindingFallbackConverter x:Key="MultipleBindingFallbackConverter" />
 
     <Style x:Key="ShowHistoryButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="Transparent"/>
