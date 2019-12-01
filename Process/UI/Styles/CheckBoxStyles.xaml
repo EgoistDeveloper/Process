@@ -225,6 +225,7 @@
         </Setter>
     </Style>
 
+    <!-- Day Break Coffee CheckBox -->
     <Style x:Key="CoffeeCheckBox" TargetType="{x:Type CheckBox}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -284,6 +285,14 @@
                             <Setter Property="Fill" TargetName="coffePath" Value="{StaticResource Brown700Brush}"/>
                             <Setter Property="Data" TargetName="coffePath" Value="{Binding Source={StaticResource CoffeeOff}, Path=Data}"/>
                             <Setter Property="ToolTip" Value="Unset Day Break"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True"/>
+                                <Condition Property="IsEnabled" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Fill" TargetName="coffePath" Value="{StaticResource Brown300Brush}"/>
+                            <Setter Property="Data" TargetName="coffePath" Value="{Binding Source={StaticResource Coffee}, Path=Data}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

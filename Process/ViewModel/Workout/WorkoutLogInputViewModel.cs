@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using Process.Data;
+using Process.Dialogs.Workout;
 using Process.Models.Workout;
 
 namespace Process.ViewModel.Workout
@@ -68,6 +69,11 @@ namespace Process.ViewModel.Workout
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Set workout day item index
+        /// </summary>
+        /// <param name="workoutDayItem"><WorkoutDayItem/param>
+        /// <returns></returns>
         public WorkoutDayItem SetTargetIndex(WorkoutDayItem workoutDayItem)
         {
             if (workoutDayItem.WorkoutTargetItems.Count > 0)
@@ -79,6 +85,24 @@ namespace Process.ViewModel.Workout
             }
 
             return workoutDayItem;
+        }
+
+        /// <summary>
+        /// Show workout graph of day
+        /// </summary>
+        public void ShowDayWorkoutGraph()
+        {
+            var dialog = new WorkoutDayGraphDialog();
+
+            dialog.Closing += (s, e) =>
+            {
+                if (dialog.DataContext is WorkoutPlanInputViewModel)
+                {
+                    mWindow.Close();
+                }
+            };
+
+            dialog.ShowDialogWindow(new WorkoutDayGraphViewModel(dialog, WorkoutDayItem), mWindow);
         }
 
         #endregion

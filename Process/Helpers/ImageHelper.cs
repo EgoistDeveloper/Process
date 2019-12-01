@@ -38,14 +38,22 @@ namespace Process.Helpers
 
         public static BitmapImage ByteArrayToBitmapImage(this byte[] byteArrayIn)
         {
-            if (byteArrayIn == null) return null;
+            if (byteArrayIn == null || byteArrayIn.Length == 0) return null;
             var ms = new MemoryStream(byteArrayIn);
 
             var image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.StreamSource = ms;
-            image.EndInit();
+
+            try
+            {
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = ms;
+                image.EndInit();
+            }
+            catch (Exception)
+            {
+                // todo: System.NotSupportedException: 'No imaging component suitable to complete this operation was found.'
+            }
 
             return image;
         }

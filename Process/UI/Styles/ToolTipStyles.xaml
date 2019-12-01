@@ -5,15 +5,19 @@
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="HasDropShadow" Value="True"/>
         <Setter Property="Foreground" Value="{StaticResource BlueGrey500Brush}"/>
+        <Setter Property="FontSize" Value="14"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
                     <Border Name="Border"
-                            Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
-                            Padding="5" Margin="5" CornerRadius="5"
+                            Width="{TemplateBinding Width}" 
+                            Height="{TemplateBinding Height}"
+                            Padding="5" 
+                            Margin="5" 
+                            CornerRadius="3"
                             Background="{StaticResource WhiteBrush}">
                         <Border.Effect>
-                            <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".2" ShadowDepth="0" Direction="0"/>
+                            <DropShadowEffect BlurRadius="10" Color="#000" Opacity=".1" ShadowDepth="0" Direction="0"/>
                         </Border.Effect>
 
                         <ContentPresenter Margin="3"

@@ -10,7 +10,6 @@ using Process.Models.Workout;
 using Process.Models.ToDo;
 using Process.Models.Diary;
 using Process.Models.AppSetting;
-using Process.Models.Calendar;
 
 namespace Process.Data
 {
@@ -104,12 +103,6 @@ namespace Process.Data
         #region AppSettings
 
         public DbSet<AppSetting> AppSettings { get; set; }
-
-        #endregion
-
-        #region Calendar
-
-        public DbSet<CalendarLog> CalendarLogs { get; set; }
 
         #endregion
 

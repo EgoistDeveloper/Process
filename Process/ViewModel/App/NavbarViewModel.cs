@@ -57,8 +57,8 @@ namespace Process.ViewModel.App
                 },
                 new NavbarItem()
                 {
-                    ApplicationPage = ApplicationPage.Calendar,
-                    IconData = (System.Windows.Application.Current.FindResource("CalendarMultipleCheck") as Path)?.Data
+                    ApplicationPage = ApplicationPage.AppSettings,
+                    IconData = (System.Windows.Application.Current.FindResource("SettingsOutline") as Path)?.Data
                 }
             };
 

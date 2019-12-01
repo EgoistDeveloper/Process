@@ -1,44 +1,74 @@
 ﻿using Process.Data;
+using Process.Helpers;
 using Process.Models.Book;
+using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Process.ViewModel.Book
 {
     public class BookLogGenreViewModel : WindowViewModel
     {
-        public BookLogGenreViewModel(Window window, BookLogGenre bookLogGenre = null) : base(window)
+        public BookLogGenreViewModel(Window window) : base(window)
         {
             mWindow = window;
-            WindowMinimumHeight = 200;
+            WindowMinimumHeight = 300;
             WindowMinimumWidth = 400;
 
-            Title = bookLogGenre != null ? $"Update: {bookLogGenre.Genre}" : "Add New Genre";
-            BookLogGenre = bookLogGenre ?? new BookLogGenre();
+            AddGenreCommand = new RelayCommand(p => AddGenre());
 
-            CloseCommand = new RelayCommand(p =>
-            {
-                AddOrUpdate();
-
-                mWindow.Close();
-            });
+            LoadBookLogGenres();
         }
+
+        #region Commands
+
+        public ICommand AddGenreCommand { get; set; }
+
+        #endregion
 
         #region Properties
 
-        public BookLogGenre BookLogGenre { get; set; }
+        public BookLogGenre BookLogGenre { get; set; } = new BookLogGenre();
+        public BookLogGenre SelectedBookLogGenre { get; set; }
+        public ObservableCollection<BookLogGenre> BookLogGenres { get; set; } = 
+            new ObservableCollection<BookLogGenre>();
 
         #endregion
 
         #region Methods
 
-        public void AddOrUpdate()
+        /// <summary>
+        /// Load book genres
+        /// </summary>
+        public void LoadBookLogGenres()
+        {
+            using var db = new AppDbContext();
+            BookLogGenres = db.BookLogGenres.ToObservableCollection();
+        }
+
+        #endregion
+
+        #region Command Methods
+
+        /// <summary>
+        /// Save booklog genre
+        /// </summary>
+        public void AddGenre()
         {
             if (!string.IsNullOrWhiteSpace(BookLogGenre.Genre))
             {
                 using var db = new AppDbContext();
 
-                _ = BookLogGenre.Id > 0 ? db.BookLogGenres.Update(BookLogGenre) : db.BookLogGenres.Add(BookLogGenre);
+                db.BookLogGenres.Add(BookLogGenre);
                 db.SaveChanges();
+
+                // add to list
+                BookLogGenres.Add(BookLogGenre);
+                // select
+                SelectedBookLogGenre = BookLogGenre;
+
+                // reset
+                BookLogGenre = new BookLogGenre();
             }
         }
 

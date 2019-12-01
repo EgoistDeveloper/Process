@@ -17,16 +17,6 @@
                 </Grid.RowDefinitions>
 
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <Button Grid.Column="1" 
-                            Margin="20"
-                            Tag="{Binding Source={StaticResource SettingsOutline}, Path=Data}"
-                            Style="{StaticResource IconButtonStyle}"
-                            Command="{Binding GoToSettingsCommand}"/>
                 </Grid>
                 
                 <Border Grid.Row="1" Background="{StaticResource WhiteBrush}">

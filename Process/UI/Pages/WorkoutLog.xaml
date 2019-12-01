@@ -14,7 +14,7 @@
     <TabControl>
         <TabItem Header="Workouts" 
                  Tag="{Binding Source={StaticResource Dumbbell}, Path=Data}" RenderTransformOrigin="0.52,0.45">
-            <Grid Margin="10 20">
+            <Grid Margin="0 15 10 0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -55,7 +55,7 @@
                     </ComboBox>
                 </Grid>
 
-                <ListView Grid.Row="1" Margin="0 20 0 0"
+                <ListView Grid.Row="1" Margin="0 15 0 0"
                           ItemTemplate="{StaticResource WorkoutPlanItemDataTemplate}" 
                           ItemsSource="{Binding WorkoutPlanItems}"
                           Tag="There is no Workout Log yet"/>

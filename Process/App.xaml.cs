@@ -30,7 +30,7 @@ namespace Process
             base.OnStartup(e);
             ApplicationSetup();
 
-            ViewModelApplication.GoToPage(ApplicationPage.WorkoutLog);
+            ViewModelApplication.GoToPage(ApplicationPage.BookLog);
 
             Current.MainWindow = new MainWindow();
             var windowViewModel = new WindowViewModel(Current.MainWindow);

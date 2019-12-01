@@ -22,8 +22,34 @@
                       CornerRadius="0" GlassFrameThickness="0"/>
     </WindowChrome.WindowChrome>
 
-    <TextBox Text="{Binding BookLogAuthor.FullName}" 
-                     Tag="Genre Title" 
-                     Margin="5"/>
+    <Grid VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
+        <ComboBox Width="290" VerticalAlignment="Center" Margin="10"
+                ItemsSource="{Binding BookLogGenres}"
+                ItemTemplate="{StaticResource BookLogGenreComboBoxItemTemplate}"
+                SelectedItem="{Binding SelectedBookLogGenre}"/>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding BookLogGenre.Genre}" 
+                     Tag="Genre" 
+                     Margin="5" 
+                     Width="200" Height="40"/>
+
+            <Button Grid.Column="1" 
+                    Width="70" Margin="10" 
+                    Content="Add Book" HorizontalAlignment="Right"
+                    Style="{StaticResource LeftIconButtonStyle}"
+                    Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                    Command="{Binding AddGenreCommand}"/>
+        </Grid>
+    </Grid>
+    
 </dialog:DialogWindow>

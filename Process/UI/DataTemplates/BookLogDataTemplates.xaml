@@ -43,11 +43,11 @@
                 <!-- Description -->
                 <ScrollViewer Grid.Column="1" Grid.Row="1"
                               VerticalScrollBarVisibility="Auto"
-                              Width="250" Height="250">
+                              Width="250" Height="250"
+                              VerticalAlignment="Top">
                     <TextBlock Margin="15 10"
                                Text="{Binding BookLogBook.Description, Converter={StaticResource SubstringConverter}, ConverterParameter=500}" 
                                TextWrapping="Wrap"
-                               VerticalAlignment="Center"
                                Foreground="{StaticResource BlueGrey500Brush}"/>
                 </ScrollViewer>
 
@@ -77,12 +77,22 @@
                                    FontWeight="Bold"/>
                     </Grid>
 
-                    <Button Grid.Column="1" Width="70"
-                            HorizontalAlignment="Right"
-                            Style="{StaticResource LeftIconButtonStyle}"
-                            Tag="{Binding Source={StaticResource MessageDraw}, Path=Data}"
-                            Command="{Binding DataContext.AddBookLogReviewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
-                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                    <StackPanel Grid.Column="1" 
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <Button Width="70"
+                                Margin="10 5"
+                                Style="{StaticResource LeftIconButtonStyle}"
+                                Tag="{Binding Source={StaticResource MessageDraw}, Path=Data}"
+                                Command="{Binding DataContext.AddBookLogReviewCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                        <Button Width="70"
+                                Margin="10 5"
+                                Style="{StaticResource LeftIconButtonStyle}"
+                                Tag="{Binding Source={StaticResource CircleEditOutline}, Path=Data}"
+                                Command="{Binding DataContext.EditBookLogBookCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+                    </StackPanel>
                 </Grid>
             </Grid>
         </Border>
@@ -254,6 +264,52 @@
                        Foreground="{StaticResource SnowWhiteBrush}"/>
             </Grid>
         </Border>
+    </DataTemplate>
+
+    <!-- BookLog Book Genre Item -->
+    <DataTemplate x:Key="BookLogBookGenreItemDataTemplate">
+        <Grid Height="35" Width="250">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource ArmFlexOutline}, Path=Data}"
+                  Fill="{StaticResource DarkGreyBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Text="{Binding BookLogGenre.Genre}"
+                       Margin="15 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource DarkGreyBrush}"/>
+
+            <!-- Remove Button -->
+            <Button Grid.Column="2" 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource CrossButtonStyle}"
+                    VerticalAlignment="Center"
+                    Command="{Binding DataContext.RemoveBookLogBookGenreCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+        </Grid>
+    </DataTemplate>
+    
+    <!-- BookLog Book Genre Item -->
+    <DataTemplate x:Key="BookLogGenreComboBoxItemTemplate">
+        <Grid Height="35" Width="250">
+            <TextBlock Grid.Column="1"
+                       Text="{Binding Genre}"
+                       Margin="15 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource WhiteBrush}"/>
+        </Grid>
     </DataTemplate>
 
 </ResourceDictionary>

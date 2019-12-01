@@ -42,9 +42,6 @@ namespace Process.Helpers
                 case ApplicationPage.Notebook:
                     return new Notebook();
 
-                case ApplicationPage.Calendar:
-                    return new Calendar();
-
                 case ApplicationPage.AppSettings:
                     return new UI.Pages.AppSettings();
 

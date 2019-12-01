@@ -12,7 +12,5 @@ namespace Process.Models.Book
         public long BookLogBookId { get; set; }
         [Required]
         public long BookLogGenreId { get; set; }
-
-        public BookLogGenre BookLogGenre { get; set; }
     }
 }

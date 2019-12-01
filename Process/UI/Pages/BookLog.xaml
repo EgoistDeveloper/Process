@@ -10,26 +10,6 @@
       DataContext="{Binding BookLogVM, Source={StaticResource Locator}}">
 
     <TabControl>
-        <TabItem Header="Reviews" 
-                 Tag="{Binding Source={StaticResource BookOpen}, Path=Data}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <ListView Margin="5"
-                          ItemsSource="{Binding BookLogReviewItems}"
-                          ItemTemplate="{StaticResource BookLogReviewDataTemplate}"
-                          Tag="There is no book review"/>
-
-                <Button Grid.Row="1" Margin="10" 
-                        Content="Add Book Review" HorizontalAlignment="Right"
-                        Style="{StaticResource LeftIconButtonStyle}"
-                        Tag="{Binding Source={StaticResource Plus}, Path=Data}"
-                        Command="{Binding AddBookLogReviewCommand}"/>
-            </Grid>
-        </TabItem>
         <TabItem Header="Books" 
                  Tag="{Binding Source={StaticResource BookOpenVariant}, Path=Data}">
             <Grid>
@@ -38,9 +18,10 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListView Margin="5"
+                <ListView Margin="0 5"
                           ItemsSource="{Binding BookLogBookItems}"
-                          ItemTemplate="{StaticResource BookLogBookDataTemplate}"/>
+                          ItemTemplate="{StaticResource BookLogBookDataTemplate}"
+                          VerticalAlignment="Top"/>
 
                 <Button Grid.Row="1" Margin="10" 
                         Content="Add Book" HorizontalAlignment="Right"
@@ -49,23 +30,25 @@
                         Command="{Binding AddBookLogBookCommand}"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Top List" 
-                 Tag="{Binding Source={StaticResource BookOpenVariant}, Path=Data}">
+        <TabItem Header="Reviews" 
+                 Tag="{Binding Source={StaticResource BookOpen}, Path=Data}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListView Margin="5"
-                          ItemsSource="{Binding BookLogBookItems}"
-                          ItemTemplate="{StaticResource BookLogBookDataTemplate}"/>
+                <ListView Margin="0 5"
+                          ItemsSource="{Binding BookLogReviewItems}"
+                          ItemTemplate="{StaticResource BookLogReviewDataTemplate}"
+                          VerticalAlignment="Top"
+                          Tag="There is no book review"/>
 
                 <Button Grid.Row="1" Margin="10" 
-                        Content="Add Book" HorizontalAlignment="Right"
+                        Content="Add Book Review" HorizontalAlignment="Right"
                         Style="{StaticResource LeftIconButtonStyle}"
                         Tag="{Binding Source={StaticResource Plus}, Path=Data}"
-                        Command="{Binding AddBookLogBookCommand}"/>
+                        Command="{Binding AddBookLogReviewCommand}"/>
             </Grid>
         </TabItem>
     </TabControl>

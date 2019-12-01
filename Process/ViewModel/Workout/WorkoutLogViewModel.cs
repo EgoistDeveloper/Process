@@ -23,6 +23,7 @@ namespace Process.ViewModel.Workout
     {
         public WorkoutLogViewModel()
         {
+            // General Commands
             AddWorkoutCommand = new RelayCommand(p => AddWorkout());
             AddWorkoutPlanCommand = new RelayCommand(p => AddWorkoutPlan());
             WorkoutPlanDeleteCommand = new RelayParameterizedCommand(WorkoutPlanDelete);
@@ -33,12 +34,13 @@ namespace Process.ViewModel.Workout
             SetIsBreakCommand = new RelayParameterizedCommand(SetIsBreak);
             YearChangedCommand = new RelayCommand(p => LoadWorkoutPlans());
 
-
             LoadYears();
             LoadWorkoutPlans();
         }
 
         #region Commands
+
+        // General Commands
 
         public ICommand AddWorkoutCommand { get; set; }
         public ICommand AddWorkoutPlanCommand { get; set; }
@@ -49,6 +51,15 @@ namespace Process.ViewModel.Workout
         public ICommand ShowMeasurementsCommand { get; set; }
         public ICommand SetIsBreakCommand { get; set; }
         public ICommand YearChangedCommand { get; set; }
+
+        // Plan Context Menu Commands
+
+        public ICommand ClonePlanCommand { get; set; }
+
+
+        // Plan Day Context Menu Commands
+
+        public ICommand ShowWorkoutDayCommand { get; set; }
 
         #endregion
 
@@ -69,6 +80,8 @@ namespace Process.ViewModel.Workout
         /// </summary>
         public ObservableCollection<Year> Years { get; set; } = new ObservableCollection<Year>();
         #endregion
+
+        public WorkoutDayItem WorkoutDayItem { get; set; }
 
         #region Methods
 
@@ -144,8 +157,12 @@ namespace Process.ViewModel.Workout
                     })
                     .ToObservableCollection(),
 
-                WorkoutDayCompleteCount = db.WorkoutLogs.Count(x => x.WorkoutDayId == wDay.Id && x.IsCompleted)
-            }).ToObservableCollection(),
+                    WorkoutDayCompleteCount = db.WorkoutLogs.Count(x => x.WorkoutDayId == wDay.Id && x.IsCompleted),
+
+                    ShowWorkoutDayCommand = new RelayParameterizedCommand(ShowWorkoutDay),
+                    SetAllDoneCommand = new RelayParameterizedCommand(SetAllWorkoutsDone),
+                    SetAllUndoneCommand = new RelayParameterizedCommand(SetAllWorkoutsUndone)
+                }).ToObservableCollection(),
                 WorkoutPlanCompleteCount = db.WorkoutDays.Count(x => x.WorkoutPlanId == wPlan.Id && x.IsCompleted)
             })
             .OrderByDescending(wPlan => wPlan.WorkoutPlan.Id)
@@ -238,6 +255,8 @@ namespace Process.ViewModel.Workout
         #endregion
 
         #region Command Methods
+
+        #region General Command Methods
 
         /// <summary>
         /// Add workout
@@ -378,6 +397,10 @@ namespace Process.ViewModel.Workout
             dialog.ShowDialogWindow(new WorkoutResultInputViewModel(dialog, workoutPlanItem.WorkoutResultItem)); ;
         }
 
+        /// <summary>
+        /// Set break day
+        /// </summary>
+        /// <param name="sender"></param>
         public void SetIsBreak(object sender)
         {
             var workoutDayItem = (sender as CheckBox).DataContext as WorkoutDayItem;
@@ -385,6 +408,108 @@ namespace Process.ViewModel.Workout
             using var db = new AppDbContext();
             db.WorkoutDays.Update(workoutDayItem.WorkoutDay);
             db.SaveChanges();
+        }
+
+        #endregion
+
+        // Plan Day Context Menu Commands
+
+        public void ShowWorkoutDay(object sender)
+        {
+            var workoutDayItem = (WorkoutDayItem)(sender as Grid).DataContext;
+
+            var dialog = new WorkoutDayGraphDialog();
+            dialog.ShowDialogWindow(new WorkoutDayGraphViewModel(dialog, workoutDayItem));
+        }
+
+        /// <summary>
+        /// Set all workouts done
+        /// </summary>
+        public void SetAllWorkoutsDone(object sender)
+        {
+            WorkoutDayItem = (WorkoutDayItem)(sender as Grid).DataContext;
+
+            foreach (var workoutTargetItem in WorkoutDayItem.WorkoutTargetItems)
+            {
+                workoutTargetItem.WorkoutLog.Sets = workoutTargetItem.WorkoutTarget.RequiredSets;
+                workoutTargetItem.WorkoutLog.Repeats = workoutTargetItem.WorkoutTarget.RequiredRepeats;
+                workoutTargetItem.WorkoutLog.IsCompleted = true;
+
+                using var db = new AppDbContext();
+
+                _ = workoutTargetItem.WorkoutLog.Id > 0 ?
+                db.WorkoutLogs.Update(workoutTargetItem.WorkoutLog) :
+                db.WorkoutLogs.Add(workoutTargetItem.WorkoutLog);
+
+                WorkoutDayItem.WorkoutDayCompleteCount = WorkoutDayItem.WorkoutTargetItems.Count;
+
+                if (WorkoutDayItem.WorkoutTargetItems.Count > 0
+                && WorkoutDayItem.WorkoutTargetItems.Count == WorkoutDayItem.WorkoutDayCompleteCount)
+                {
+                    WorkoutDayItem.WorkoutDay.IsCompleted = true;
+                    db.WorkoutDays.Update(WorkoutDayItem.WorkoutDay);
+                }
+                else if (WorkoutDayItem.WorkoutDay.IsCompleted)
+                {
+                    WorkoutDayItem.WorkoutDay.IsCompleted = false;
+                    db.WorkoutDays.Update(WorkoutDayItem.WorkoutDay);
+                }
+
+                db.SaveChanges();
+            }
+
+            for (int i = 0; i < WorkoutPlanItems.Count; i++)
+            {
+                if (WorkoutPlanItems[i].WorkoutDayItems.Contains(WorkoutDayItem))
+                {
+                    WorkoutPlanItems[i].WorkoutPlanCompleteCount += 1;
+                    WorkoutPlanItems[i].PlanNote += WorkoutDayItem.WorkoutDayCompleteCount;
+                    return;
+                }
+            }
+        }
+
+        public void SetAllWorkoutsUndone(object sender)
+        {
+            WorkoutDayItem = (WorkoutDayItem)(sender as Grid).DataContext;
+
+            foreach (var workoutTargetItem in WorkoutDayItem.WorkoutTargetItems)
+            {
+                workoutTargetItem.WorkoutLog.Sets = 0;
+                workoutTargetItem.WorkoutLog.Repeats = 0;
+                workoutTargetItem.WorkoutLog.IsCompleted = false;
+
+                using var db = new AppDbContext();
+
+                _ = workoutTargetItem.WorkoutLog.Id > 0 ?
+                db.WorkoutLogs.Update(workoutTargetItem.WorkoutLog) :
+                db.WorkoutLogs.Add(workoutTargetItem.WorkoutLog);
+
+                WorkoutDayItem.WorkoutDayCompleteCount = 0;
+
+                if (WorkoutDayItem.WorkoutTargetItems.Count > 0 && WorkoutDayItem.WorkoutDayCompleteCount == 0)
+                {
+                    WorkoutDayItem.WorkoutDay.IsCompleted = false;
+                    db.WorkoutDays.Update(WorkoutDayItem.WorkoutDay);
+                }
+                else if (WorkoutDayItem.WorkoutDay.IsCompleted)
+                {
+                    WorkoutDayItem.WorkoutDay.IsCompleted = true;
+                    db.WorkoutDays.Update(WorkoutDayItem.WorkoutDay);
+                }
+
+                db.SaveChanges();
+            }
+
+            for (int i = 0; i < WorkoutPlanItems.Count; i++)
+            {
+                if (WorkoutPlanItems[i].WorkoutDayItems.Contains(WorkoutDayItem))
+                {
+                    WorkoutPlanItems[i].WorkoutPlanCompleteCount -= 1;
+                    WorkoutPlanItems[i].PlanNote -= WorkoutDayItem.WorkoutTargetItems.Count();
+                    return;
+                }
+            }
         }
 
         #endregion

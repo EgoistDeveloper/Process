@@ -18,7 +18,7 @@
     <!--Outer menu items-->
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="Background" Value="{StaticResource WhiteBrush}"/>
-        <Setter Property="Opacity" Value=".9"/>
+        <Setter Property="Opacity" Value=".95"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="White"/>
         <Setter Property="FontSize" Value="15"/>
@@ -46,7 +46,7 @@
                             Background="{StaticResource WhiteBrush}"
                             Margin="3">
                         <Border.Effect>
-                            <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".5" ShadowDepth="0" Direction="0"/>
+                            <DropShadowEffect BlurRadius="5" Color="#000" Opacity=".2" ShadowDepth="0" Direction="0"/>
                         </Border.Effect>
 
                         <StackPanel ClipToBounds="True" Orientation="Vertical" IsItemsHost="True"/>
@@ -54,7 +54,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource WhiteBrush}" />
-                            <Setter TargetName="Border" Property="Opacity" Value=".9"/>
+                            <Setter TargetName="Border" Property="Opacity" Value=".95"/>
 
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource WhiteBrush}"/>
                             <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
@@ -79,7 +79,6 @@
                 <Grid.Effect>
                     <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".2" ShadowDepth="0" Direction="0"/>
                 </Grid.Effect>
-
 
                 <!--#region Primary Area-->
 

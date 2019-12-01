@@ -16,10 +16,10 @@ namespace Process.ViewModel.Book
 {
     public class BookLogReviewViewModel : WindowViewModel
     {
-        public BookLogReviewViewModel(Window window, BookLogReviewItem bookLogReviewItem = null) : base(window)
+        public BookLogReviewViewModel(Window window, BookLogReviewItem bookLogReviewItem = null, BookLogBookItem bookLogBookItem = null) : base(window)
         {
             mWindow = window;
-            WindowMinimumHeight = 400;
+            WindowMinimumHeight = 600;
             WindowMinimumWidth = 800;
 
             Title = bookLogReviewItem != null ? 
@@ -27,10 +27,13 @@ namespace Process.ViewModel.Book
                 "Add New Book Review";
             BookLogReviewItem = bookLogReviewItem ?? new BookLogReviewItem();
 
-
-
             using var db = new AppDbContext();
             BookLogBooks = db.BookLogBooks.ToObservableCollection();
+
+            if (bookLogBookItem != null)
+            {
+                SelectedBookLogBook = BookLogBooks.FirstOrDefault(x => x.Id == bookLogBookItem.BookLogBook.Id);
+            }
 
             if (bookLogReviewItem != null)
             {
@@ -74,6 +77,8 @@ namespace Process.ViewModel.Book
             if (!string.IsNullOrWhiteSpace(BookLogReviewItem.BookLogReview.Review) &&
                 BookLogReviewItem.BookLogReview.Rate > 0 && SelectedBookLogBook != null)
             {
+                BookLogReviewItem.BookLogBookItem.BookLogBook = SelectedBookLogBook;
+
                 BookLogReviewItem.BookLogReview.BookLogBookId = SelectedBookLogBook.Id;
 
                 using var db = new AppDbContext();

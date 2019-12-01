@@ -290,6 +290,9 @@
     <Compile Include="Dialogs\ToDo\ToDoListInputDialog.xaml.cs">
       <DependentUpon>ToDoListInputDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Workout\WorkoutDayGraphDialog.xaml.cs">
+      <DependentUpon>WorkoutDayGraphDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Workout\WorkoutInputDialog.xaml.cs">
       <DependentUpon>WorkoutInputDialog.xaml</DependentUpon>
     </Compile>
@@ -329,6 +332,7 @@
       <DependentUpon>20191120201906_First.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AppDbContextModelSnapshot.cs" />
+    <Compile Include="Models\Book\BookLogBookGenreItem.cs" />
     <Compile Include="Models\Book\BookLogBookItem.cs" />
     <Compile Include="Models\Book\BookLogItem.cs" />
     <Compile Include="Models\Book\BookLogReviewItem.cs" />
@@ -338,9 +342,6 @@
     <Compile Include="Models\Book\Entities\BookLogBookGenre.cs" />
     <Compile Include="Models\Book\Entities\BookLogGenre.cs" />
     <Compile Include="Models\Book\Entities\BookLogReview.cs" />
-    <Compile Include="Models\Calendar\CalendarDay.cs" />
-    <Compile Include="Models\Calendar\CalendarMonth.cs" />
-    <Compile Include="Models\Calendar\Entities\CalendarLog.cs" />
     <Compile Include="Models\Common\AppSettings.cs" />
     <Compile Include="Models\Common\DateTime\Day.cs" />
     <Compile Include="Models\Common\DateTime\Month.cs" />
@@ -445,6 +446,8 @@
     <Compile Include="UI\Converters\IntMinusConverter.cs" />
     <Compile Include="UI\Converters\IntToBoolConverter.cs" />
     <Compile Include="UI\Converters\IntToColorConverter.cs" />
+    <Compile Include="UI\Converters\IsTodayToBoolConverter.cs" />
+    <Compile Include="UI\Converters\IsTodayToVisibilityConverter.cs" />
     <Compile Include="UI\Converters\LengthToFontSizeConverter.cs" />
     <Compile Include="UI\Converters\MessageDialogIconConverter.cs" />
     <Compile Include="UI\Converters\MultipleBindingFallbackConverter.cs" />
@@ -513,8 +516,6 @@
     <Compile Include="ViewModel\Book\BookLogGenreViewModel.cs" />
     <Compile Include="ViewModel\Book\BookLogReviewViewModel.cs" />
     <Compile Include="ViewModel\Book\BookLogViewModel.cs" />
-    <Compile Include="ViewModel\Calendar\CalendarLogViewModel.cs" />
-    <Compile Include="ViewModel\Calendar\CalendarViewModel.cs" />
     <Compile Include="ViewModel\Dashboard\DashboardViewModel.cs" />
     <Compile Include="ViewModel\Diary\AddDiaryLogViewModel.cs" />
     <Compile Include="ViewModel\Diary\DiaryLogOfDayViewModel.cs" />
@@ -529,10 +530,10 @@
     <Compile Include="ViewModel\Pocket\CategoryInputViewModel.cs" />
     <Compile Include="ViewModel\Pocket\InOutInputViewModel.cs" />
     <Compile Include="ViewModel\Pocket\PocketBankViewModel.cs" />
-    <Compile Include="ViewModel\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoItemInputViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoListInputViewModel.cs" />
     <Compile Include="ViewModel\ToDo\ToDoLogViewModel.cs" />
+    <Compile Include="ViewModel\Workout\WorkoutDayGraphViewModel.cs" />
     <Compile Include="ViewModel\Workout\WorkoutMeasurementsViewModel.cs" />
     <Compile Include="ViewModel\Workout\WorkoutInputViewModel.cs" />
     <Compile Include="ViewModel\Workout\WorkoutLogInputViewModel.cs" />
@@ -606,6 +607,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ToDo\ToDoListInputDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Workout\WorkoutDayGraphDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
