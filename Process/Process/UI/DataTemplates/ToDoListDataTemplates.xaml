@@ -1,0 +1,175 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Process.UI.Converters"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
+    <converters:IntMinusConverter x:Key="IntMinusConverter"/>
+
+    <!-- ToDo Item ContextMenu -->
+    <ContextMenu x:Key="ToDoItemContextMenu">
+        <MenuItem Header="Edit"
+                  Command="{Binding DataContext.UpdateToDoCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="UniformToFill"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource Pencil}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+    <!-- ToDo Item -->
+    <DataTemplate x:Key="ToDoItemTemplate">
+        <Grid Height="25" 
+              Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth, 
+                      Converter={StaticResource IntMinusConverter}, ConverterParameter=30}"
+              Margin="10 5" 
+              ContextMenu="{StaticResource ToDoItemContextMenu}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox Foreground="Black" 
+                      Content="{Binding ToDoContent}"
+                      IsChecked="{Binding IsDone}"
+                      Style="{DynamicResource ToDoCheckBox}"
+                      HorizontalAlignment="Left">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsDoneCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+
+            <CheckBox Grid.Column="1" 
+                      Margin="5 0 0 0"
+                      Style="{StaticResource StarCheckBox}"
+                      IsChecked="{Binding IsImportant}"
+                      VerticalAlignment="Center">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsImportantCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+            <Button Grid.Column="2" 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource CrossButtonStyle}"
+                    VerticalAlignment="Center"
+                    Command="{Binding DataContext.DeleteToDoCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- ToDo List Item ContextMenu -->
+    <ContextMenu x:Key="ToDoListItemContextMenu">
+        <MenuItem Header="Edit"
+                  Command="{Binding DataContext.UpdateToDoListCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="UniformToFill"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource Pencil}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+    
+    <!-- ToDo List Item -->
+    <DataTemplate x:Key="ToDoListItemTemplate">
+        <Border Width="405" Height="500" Margin="10"
+                Background="{StaticResource WhiteBrush}" 
+                CornerRadius="5">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".02" ShadowDepth="0" Direction="0"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Background="{StaticResource SoftBlueBrush}" 
+                        CornerRadius="5 5 0 0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock VerticalAlignment="Center"
+                                       TextAlignment="Left"
+                                       FontSize="46"
+                                       Margin="10 0 0 0" Opacity=".4"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="ToDoDoneCount"/>
+                                        <Binding Path="ToDoList.ToDos.Count" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+
+                            <StackPanel Grid.Column="1" Margin="0 10 0 0"
+                                        Orientation="Vertical" 
+                                        HorizontalAlignment="Right">
+                                <Button Height="30"
+                                        Style="{StaticResource LeftIconButtonStyle}"
+                                        Tag="{Binding Source={StaticResource PlaylistPlus}, Path=Data}"
+                                        Command="{Binding DataContext.AddToDoCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Add ToDo"/>
+
+                                <Button Height="30" Margin="0 5 0 0"
+                                        Style="{StaticResource LeftIconButtonStyle}"
+                                        Tag="{Binding Source={StaticResource DeleteSweepOutline}, Path=Data}"
+                                        Command="{Binding DataContext.DeleteToDoListCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Delete ToDo List"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1" 
+                                   Margin="10"
+                                   Text="{Binding ToDoList.Title}" 
+                                   VerticalAlignment="Bottom"
+                                   TextAlignment="Left"
+                                   FontSize="16"
+                                   TextWrapping="WrapWithOverflow"
+                                   Foreground="{StaticResource SoftBlueGreyBrush}"
+                                   ContextMenu="{StaticResource ToDoListItemContextMenu}"
+                                   ToolTip="{Binding ToDoList.LastUpdateDate, StringFormat='Last Update: {0}'}"/>
+
+                        <ProgressBar Grid.Row="2" Height="10"
+                                     Background="{StaticResource SnowWhiteBrush}"
+                                     Foreground="{StaticResource LightBlueBrush}"
+                                     Maximum="{Binding ToDoList.ToDos.Count}"
+                                     Value="{Binding ToDoDoneCount}"/>
+                    </Grid>
+                </Border>
+
+                <ListView Grid.Row="1"
+                          ItemTemplate="{StaticResource ToDoItemTemplate}"
+                          ItemsSource="{Binding ToDoList.ToDos}"
+                          VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

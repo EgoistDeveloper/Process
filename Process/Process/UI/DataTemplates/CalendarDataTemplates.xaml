@@ -1,0 +1,97 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Process.UI.DataTemplates"
+                    xmlns:converters="clr-namespace:Process.UI.Converters">
+    
+    <converters:DayButonStyleConverter x:Key="DayButonStyleConverter"/>
+    <converters:ThisMonthUnderlineConverter x:Key="ThisMonthUnderlineConverter"/>
+    <converters:IntToColorConverter x:Key="IntToColorConverter"/>
+    <converters:SubstringConverter x:Key="SubstringConverter"/>
+    <converters:MultipleBindingFallbackConverter x:Key="MultipleBindingFallbackConverter"/>
+
+    <!-- Calendar Day Data Template -->
+    <DataTemplate x:Key="CalendarDayDataTemplate">
+        <Button Content="{Binding Date.Day}" 
+                IsEnabled="{Binding IsEnabled}"
+                IsDefault="{Binding IsDefault}"
+                Style="{Binding DayStatus, 
+                        FallbackValue={StaticResource DayButtonBaseStyle},
+                        Converter={StaticResource DayButonStyleConverter}}"
+                Background="{Binding CalendarLog.Activity.Length, 
+                             FallbackValue={StaticResource BlueGrey900Brush}, 
+                             Converter={StaticResource IntToColorConverter}}"
+                Command="{Binding DataContext.CalendarButtonCommand, 
+                          RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+            <Button.ToolTip>
+                <MultiBinding Converter="{StaticResource MultipleBindingFallbackConverter}">
+                    <Binding Path="TooltipText" FallbackValue=""/>
+                    <Binding Path="CalendarLog.Activity" StringFormat="Keywords: {0}}" 
+                             Converter="{StaticResource SubstringConverter}" ConverterParameter="200"/>
+                    <Binding Path="Date" StringFormat="{}{0:dd.MM.yyyy}}"/>
+                </MultiBinding>
+            </Button.ToolTip>
+        </Button>
+    </DataTemplate>
+
+    <!-- 12 Months List Item (Calendar) DataTemplate -->
+    <DataTemplate x:Key="CalendarMonthDataTemplate">
+        <Border Background="{StaticResource WhiteBrush}" CornerRadius="5" Margin="10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Color="#000" 
+                                  Opacity=".02" ShadowDepth="0" Direction="0"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Month Name -->
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="12" FontWeight="DemiBold" 
+                           Foreground="{StaticResource SpruceBrush}"
+                           TextDecorations="{Binding Path=MonthNumber, Converter={StaticResource ThisMonthUnderlineConverter}, 
+                                             UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="15" Color="#000" 
+                                          Opacity=".1" ShadowDepth="5" Direction="0"/>
+                    </TextBlock.Effect>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} {1}">
+                            <Binding Path="MonthName" FallbackValue="-"/>
+                            <Binding Path="Year" FallbackValue="-" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <!-- Weekdays Bar -->
+                <WrapPanel Grid.Row="1" Width="245" Height="245"
+                           HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="Mo" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="Tu" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="We" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="Th" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="Fr" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="Sa" Style="{StaticResource WeekdaysStyle}"/>
+                    <TextBlock Text="Su" Style="{StaticResource WeekdaysStyle}"/>
+                </WrapPanel>
+
+                <!-- Separator -->
+                <Border Grid.Row="2" BorderBrush="{StaticResource GreyBrush}" 
+                        BorderThickness="0 1 0 0" Margin="15 5"/>
+
+                <!-- Days List -->
+                <ListView Grid.Row="2" 
+                          Width="245" Margin="10"
+                          ItemsSource="{Binding CalendarDays}" 
+                          ItemTemplate="{StaticResource CalendarDayDataTemplate}">
+                </ListView>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+
+</ResourceDictionary>

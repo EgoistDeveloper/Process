@@ -1,0 +1,75 @@
+﻿<dialog:DialogWindow x:Class="Process.Dialogs.Workout.WorkoutInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Process.Dialogs.Workout"
+        xmlns:dialog="clr-namespace:Process.Dialogs"
+        mc:Ignorable="d"
+        Height="700" Width="800">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type local:WorkoutInputDialog}" BasedOn="{StaticResource BasicWindowBaseStyle}"/>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding CloseCommand}"/>
+    </Window.InputBindings>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome ResizeBorderThickness="{Binding ResizeBorderThickness}"
+                      CaptionHeight="{Binding TitleHeight}"
+                      CornerRadius="0" GlassFrameThickness="0"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ListView Margin="0 20 0 20" Width="265"
+                  HorizontalAlignment="Stretch"
+                  ItemTemplate="{StaticResource WorkoutListItemDataTemplate}" 
+                  ItemsSource="{Binding Workouts}"
+                  Tag="There is no Workout yet"/>
+
+        <StackPanel Grid.Column="1" 
+                    Orientation="Vertical" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <ComboBox Width="200" Margin="10 30"
+                      ItemsSource="{Binding BodyPartItems}"
+                      SelectedItem="{Binding SelectedBodyPartItem}"
+                      ItemTemplate="{StaticResource BodyPartDataTemplate}"/>
+
+            <TextBox Text="{Binding WorkoutTitle}" 
+                     Height="40" Width="200" Margin="10" Tag="Title"/>
+
+            <TextBox Text="{Binding WorkoutDescription}" 
+                     Height="40" Width="200" Margin="10" Tag="Description"/>
+
+            <TextBox Text="{Binding VideoLink}" 
+                     Height="40" Width="200" Margin="10" Tag="Description"/>
+
+            <Button Content="Save Target"
+                    Margin="10" Width="200" 
+                    Style="{StaticResource LeftIconButtonStyle}"
+                    Tag="{Binding Source={StaticResource BullseyeArrow}, Path=Data}"
+                    Command="{Binding AddWorkoutCommand}"/>
+            <GroupBox Header="Image">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="{Binding Image}" Margin="10"/>
+
+                    <Button Grid.Row="1" Margin="10" Width="400"
+                            Content="Add Image" HorizontalAlignment="Center"
+                            Style="{StaticResource LeftIconButtonStyle}"
+                            Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                            Command="{Binding AddImageCommand}"/>
+                </StackPanel>
+            </GroupBox>
+
+        </StackPanel>
+    </Grid>
+
+</dialog:DialogWindow>

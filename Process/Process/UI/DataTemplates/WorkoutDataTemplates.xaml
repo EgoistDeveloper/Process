@@ -1,0 +1,785 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:helpers="clr-namespace:Process.Helpers"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:converters="clr-namespace:Process.UI.Converters">
+
+    <!-- Converters -->
+    <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
+    <converters:BoolToReverseVisibilityConverter x:Key="BoolToReverseVisibilityConverter" />
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converters:IntMinusConverter x:Key="IntMinusConverter"/>
+    <converters:IntToColorConverter x:Key="IntToColorConverter" />
+    <converters:ExpiredDateToBoolConverter x:Key="ExpiredDateToBoolConverter" />
+    <converters:ExpiredDateToReverseBoolConverter x:Key="ExpiredDateToReverseBoolConverter" />
+    <converters:IsTodayToVisibilityConverter x:Key="IsTodayToVisibilityConverter" />
+
+    <!--#region Workouts and Targets -->
+
+    <!-- Body Parts for Workout (Combobox) -->
+    <DataTemplate x:Key="BodyPartDataTemplate">
+        <Grid Height="30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource ArmFlexOutline}, Path=Data}"
+                  Fill="{StaticResource SnowWhiteBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Margin="10 0 0 0"
+                       Text="{Binding BodyPartName}"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource SnowWhiteBrush}"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- Workout List Item -->
+    <DataTemplate x:Key="WorkoutListItemDataTemplate">
+        <Grid Height="35" Width="250">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource ArmFlexOutline}, Path=Data}"
+                  Fill="{StaticResource DarkGreyBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Text="{Binding WorkoutTitle}"
+                       Margin="15 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource DarkGreyBrush}"
+                       ToolTip="{Binding WorkoutDescription}"/>
+
+            <Button Grid.Column="2" 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource CrossButtonStyle}"
+                    VerticalAlignment="Center"
+                    Command="{Binding DataContext.DeleteWorkoutCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+        </Grid>
+    </DataTemplate>
+
+    <!-- Workout for Targets (Combobox) -->
+    <DataTemplate x:Key="WorkoutDataTemplate">
+        <Grid Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource Bullseye}, Path=Data}"
+                  Fill="{StaticResource SnowWhiteBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Margin="10 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource SnowWhiteBrush}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} ({1})">
+                        <Binding Path="WorkoutTitle"/>
+                        <Binding Path="TargetBodyPart"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <!-- Workout Target List Items -->
+    <DataTemplate x:Key="WorkoutTargetItemDataTemplate">
+        <Grid Height="40" Width="250">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource Bullseye}, Path=Data}"
+                  Fill="{StaticResource DarkGreyBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Margin="15 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource DarkGreyBrush}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} ({1}) - {2}x{3}">
+                        <Binding Path="Workout.WorkoutTitle"/>
+                        <Binding Path="Workout.TargetBodyPart"/>
+                        <Binding Path="WorkoutTarget.RequiredSets"/>
+                        <Binding Path="WorkoutTarget.RequiredRepeats"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <Button Grid.Column="2" 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource CrossButtonStyle}"
+                    VerticalAlignment="Center"
+                    Command="{Binding DataContext.DeleteWorkoutTargetCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+
+        </Grid>
+    </DataTemplate>
+
+    <!--#endregion -->
+
+    <!--#region Workout Plans and Days -->
+
+    <!-- Workout Plan Day ContextMenu -->
+    <ContextMenu x:Key="WorkoutDayItemContextMenu">
+        <MenuItem Header="Set All Done"
+                  Command="{Binding DataContext.SetAllDoneCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  Visibility="{Binding DataContext.WorkoutDay.IsCompleted, 
+                              RelativeSource={RelativeSource Mode=FindAncestor, 
+                              AncestorType={x:Type ContextMenu}}, 
+                              Converter={StaticResource BoolToReverseVisibilityConverter}}"
+                  ToolTip="Clone this plan">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource CheckBold}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Set All Undone"
+                  Command="{Binding DataContext.SetAllUndoneCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  Visibility="{Binding DataContext.WorkoutDay.IsCompleted, 
+                              RelativeSource={RelativeSource Mode=FindAncestor, 
+                              AncestorType={x:Type ContextMenu}}, 
+                              Converter={StaticResource BoolToVisibilityConverter}}"
+                  ToolTip="Clone this plan">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource Check}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Show Day Workout Graph"
+                  Command="{Binding DataContext.ShowWorkoutDayCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  ToolTip="Clone this plan">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource ChartBellCurveCumulative}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+    <!-- Workout Plan Day Item -->
+    <DataTemplate x:Key="WorkoutDayItemDataTemplate">
+        <Grid ContextMenu="{StaticResource WorkoutDayItemContextMenu}">
+            <!-- Content -->
+            <Grid x:Name="WorkoutDayItemGrid" 
+                  Width="370" Margin="10 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Path Height="10"
+                          Margin="10 0 0 0"
+                          Stretch="Uniform"
+                          ToolTip="Today"
+                          Fill="{Binding WorkoutDay.DayNumber, Converter={StaticResource IntToColorConverter}}"
+                          Data="{Binding Source={StaticResource Triangle}, Path=Data}"
+                          Visibility="{Binding WorkoutDay.Date, Converter={StaticResource IsTodayToVisibilityConverter},
+                                       FallbackValue=Collapsed}">
+                        <Path.RenderTransform>
+                            <RotateTransform CenterX="0" CenterY="0" Angle="90" />
+                        </Path.RenderTransform>
+                    </Path>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding WorkoutDay.DayNumber, StringFormat={}#{0} - }"
+                               Foreground="{Binding WorkoutDay.DayNumber, Converter={StaticResource IntToColorConverter}}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="20"/>
+                </Grid>
+
+                <TextBlock Grid.Column="1" 
+                            Margin="10 0"
+                            VerticalAlignment="Center"
+                            Text="{Binding WorkoutDay.Date, StringFormat=d.MM.yyyy - dddd}"/>
+
+                <Button Grid.Column="2" 
+                        Tag="{Binding Source={StaticResource Plus}, Path=Data}"
+                        Style="{StaticResource ListItemButtonStyle}" 
+                        IsEnabled="{Binding WorkoutDay.IsBreak, Converter={StaticResource ReverseBoolConverter}}"
+                        Command="{Binding DataContext.AddWorkoutLogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                        ToolTip="Add Progress"/>
+
+                <CheckBox Grid.Column="3" 
+                            Margin="5 0 0 0"
+                            Style="{StaticResource CoffeeCheckBox}"
+                            IsChecked="{Binding WorkoutDay.IsBreak}"
+                            IsEnabled="{Binding WorkoutDay.IsCompleted, Converter={StaticResource ReverseBoolConverter}}"
+                            VerticalAlignment="Center">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding DataContext.SetIsBreakCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </CheckBox>
+
+                <ProgressBar Grid.ColumnSpan="4" Grid.Row="1"
+                             Height="2"
+                             Style="{StaticResource ProgressBarBaseStyle}"
+                             Maximum="{Binding WorkoutTargetItems.Count, FallbackValue=1}"
+                             Value="{Binding WorkoutDayCompleteCount, FallbackValue=0}"/>
+            </Grid>
+            <!-- 'Passed' Text -->
+            <TextBlock x:Name="PassedText" 
+                       Text="Passed" 
+                       FontWeight="Bold"
+                       Foreground="{StaticResource BlueGrey300Brush}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Visibility="Collapsed"/>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding WorkoutDay.Date, 
+                                   Converter={StaticResource ExpiredDateToBoolConverter}, 
+                                   ConverterParameter=2}" Value="True">
+                <Setter TargetName="WorkoutDayItemGrid" Property="IsEnabled" Value="False"/>
+                <Setter TargetName="WorkoutDayItemGrid" Property="Opacity" Value=".4"/>
+                <Setter TargetName="PassedText" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- Workout Plan ContextMenu -->
+    <ContextMenu x:Key="WorkoutPlanContextMenu">
+        <MenuItem Header="Clone Plan"
+                  Command="{Binding DataContext.ClonePlanCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  ToolTip="Clone this plan">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource ContentCopy}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Export Plan (Raw)"
+                  Command="{Binding DataContext.ExportPlaAsRawCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  ToolTip="Export this plan and share with your friends">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource SwapVertical}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Export Plan (Include Progress Logs)"
+                  Command="{Binding DataContext.ExportPlaWithProgessCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  ToolTip="Export this plan and share with your friends">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource SwapVertical}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Terminate"
+                  Command="{Binding DataContext.TerminatePlanCommand, 
+                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                            AncestorType={x:Type ContextMenu}}}" 
+                  CommandParameter="{Binding Path=PlacementTarget, 
+                                     RelativeSource={RelativeSource Mode=FindAncestor, 
+                                     AncestorType={x:Type ContextMenu}}}"
+                  ToolTip="End this plan">
+            <MenuItem.Icon>
+                <Path Height="15" Width="15" Stretch="Uniform"
+                      Fill="{StaticResource BlueGrey600Brush}"
+                      Data="{Binding Source={StaticResource MinusBoxOutline}, Path=Data}"/>
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+    <!-- Workout Plans -->
+    <DataTemplate x:Key="WorkoutPlanItemDataTemplate">
+        <Border Width="405" Height="550" Margin="10"
+                Background="{StaticResource WhiteBrush}" 
+                CornerRadius="5">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Color="#000" Opacity=".02" ShadowDepth="0" Direction="0"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="180"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Regular Header -->
+                <Border Background="{StaticResource SoftBlueBrush}" CornerRadius="5 5 0 0"
+                        Visibility="{Binding IsExpired, Converter={StaticResource BoolToReverseVisibilityConverter}}"
+                        ContextMenu="{StaticResource WorkoutPlanContextMenu}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding PlanNote}" 
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="46"
+                                           Margin="10 0 0 0"
+                                           TextWrapping="WrapWithOverflow"
+                                           TextDecorations="Underline"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="1" 
+                                           Text="points" 
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="20"
+                                           Margin="10 0 0 30"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" Margin="0 10 0 0"
+                                        Orientation="Vertical" 
+                                        HorizontalAlignment="Right">
+                                <Button Height="25"
+                                        Style="{StaticResource LeftIconButtonStyle}"
+                                        Tag="{Binding Source={StaticResource BullseyeArrow}, Path=Data}"
+                                        Command="{Binding DataContext.AddWorkoutTargetsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Add Workout Targets"/>
+
+                                <Button Height="25" Margin="0 5 0 0"
+                                        Style="{StaticResource LeftIconButtonStyle}"
+                                        Tag="{Binding Source={StaticResource DeleteSweepOutline}, Path=Data}"
+                                        Command="{Binding DataContext.WorkoutPlanDeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Delete Plan"/>
+
+                                <Button Height="25" Margin="0 5 0 0"
+                                        Style="{StaticResource LeftIconButtonStyle}"
+                                        Tag="{Binding Source={StaticResource ChartBar}, Path=Data}"
+                                        Command="{Binding DataContext.ShowTargetLogGraphCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Show Target-Log Graph"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="10"
+                                       Text="{Binding WorkoutPlan.Title}" 
+                                       VerticalAlignment="Bottom"
+                                       TextAlignment="Left"
+                                       FontSize="16"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock>
+                                    <Run Text="{Binding WorkoutPlan.AddedDate, StringFormat={}Added Date: {0}}"/>
+                                    <LineBreak/>
+                                    <Run Text="{Binding WorkoutPlan.ExpireDate, StringFormat={}Expire Date: {0}}"/>
+                                    <LineBreak/>
+                                    <Run Text="{Binding WorkoutPlan.Description, StringFormat={}Note: {0}}"/>
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" 
+                                       VerticalAlignment="Bottom"
+                                       HorizontalAlignment="Left"
+                                       TextAlignment="Left"
+                                       FontSize="26"
+                                       Margin="10"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}"
+                                       Opacity=".4">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="WorkoutPlanCompleteCount"/>
+                                        <Binding Path="WorkoutDayItems.Count" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                                <TextBlock.ToolTip>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} done (day/s) of {1}">
+                                                <Binding Path="WorkoutPlanCompleteCount"/>
+                                                <Binding Path="WorkoutDayItems.Count" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Expired Header -->
+                <Border Background="{StaticResource YellowBrush}" CornerRadius="5 5 0 0" 
+                        Visibility="{Binding IsExpired, Converter={StaticResource BoolToVisibilityConverter}}"
+                        ContextMenu="{StaticResource WorkoutPlanContextMenu}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding PlanNote}" 
+                                           VerticalAlignment="Top"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="46"
+                                           Margin="10 0 0 0"
+                                           TextWrapping="WrapWithOverflow"
+                                           TextDecorations="Underline"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="1" 
+                                           Text="points" 
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           FontSize="20"
+                                           Margin="10 0 0 30"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"
+                                           Opacity=".4">
+                                </TextBlock>
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" Margin="0 10 0 0"
+                                        Orientation="Vertical" 
+                                        HorizontalAlignment="Right">
+                                <TextBlock Margin="0 5 10 0"
+                                           Text="Expired" 
+                                           VerticalAlignment="Top"
+                                           TextAlignment="Right"
+                                           FontSize="16"
+                                           TextWrapping="WrapWithOverflow"
+                                           Foreground="{StaticResource SoftBlueGreyBrush}"/>
+
+                                <Button Height="25" Margin="0 5 0 0"
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource LeftIconYellowButtonStyle}"
+                                        Tag="{Binding Source={StaticResource ChartBar}, Path=Data}"
+                                        Command="{Binding DataContext.ShowTargetLogGraphCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Show Target-Log Graph"/>
+                                <Button Height="25" Margin="0 5 0 0"
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource LeftIconYellowButtonStyle}"
+                                        Tag="{Binding Source={StaticResource ChartMultiline}, Path=Data}"
+                                        Command="{Binding DataContext.ShowMeasurementsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                        ToolTip="Body Measurements"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="10"
+                                       Text="{Binding WorkoutPlan.Title}" 
+                                       VerticalAlignment="Bottom"
+                                       TextAlignment="Left"
+                                       FontSize="16"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}">
+                                <TextBlock.ToolTip>
+                                    <TextBlock>
+                                    <Run Text="{Binding WorkoutPlan.AddedDate, StringFormat={}Added Date: {0}}"/>
+                                    <LineBreak/>
+                                    <Run Text="{Binding WorkoutPlan.ExpireDate, StringFormat={}Expire Date: {0}}"/>
+                                    <LineBreak/>
+                                    <Run Text="{Binding WorkoutPlan.Description, StringFormat={}Note: {0}}"/>
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" 
+                                       VerticalAlignment="Top"
+                                       HorizontalAlignment="Left"
+                                       TextAlignment="Left"
+                                       FontSize="26"
+                                       Margin="10 0"
+                                       TextWrapping="WrapWithOverflow"
+                                       Foreground="{StaticResource SoftBlueGreyBrush}"
+                                       Opacity=".4">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="WorkoutPlanCompleteCount"/>
+                                        <Binding Path="WorkoutDayItems.Count" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Days List -->
+                <ListView Grid.Row="1" Margin="0 10"
+                          ItemTemplate="{StaticResource WorkoutDayItemDataTemplate}"
+                          ItemsSource="{Binding WorkoutDayItems}"
+                          VerticalAlignment="Top"
+                          IsEnabled="{Binding IsExpired, Converter={StaticResource ReverseBoolConverter}}"/>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <!--#endregion -->
+
+    <!-- Workout Target List Item -->
+    <DataTemplate x:Key="WorkoutTargetListItemDataTemplate">
+        <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}, Path=ActualWidth, 
+                      Converter={StaticResource IntMinusConverter}, ConverterParameter=30}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Style="{StaticResource ToDoIndexCheckBox}"
+                      Tag="{Binding Index}"
+                      IsChecked="{Binding WorkoutLog.IsCompleted}">
+                <CheckBox.ToolTip>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Margin="10 0 0 0"
+                        TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Workout.WorkoutTitle"/>
+                                    <Binding Path="Workout.TargetBodyPart"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <TextBlock Grid.Column="1" 
+                               Margin="10 0 0 0"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} x {1}">
+                                    <Binding Path="WorkoutTarget.RequiredSets"/>
+                                    <Binding Path="WorkoutTarget.RequiredRepeats"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+                </CheckBox.ToolTip>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="10 0 0 0"
+                        TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} ({1})">
+                                <Binding Path="Workout.WorkoutTitle"/>
+                                <Binding Path="Workout.TargetBodyPart"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <TextBlock Grid.Column="1" 
+                               Margin="10 0 0 0"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGreyBrush}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} x {1}">
+                                <Binding Path="WorkoutTarget.RequiredSets"/>
+                                <Binding Path="WorkoutTarget.RequiredRepeats"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsWorkoutDoneCommand, 
+                                                         RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                                  AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+
+            <TextBox Grid.Column="1" 
+                     Text="{Binding WorkoutLog.Sets}" 
+                     Height="40" Width="150" Margin="5"
+                     IsEnabled="{Binding WorkoutLog.IsCompleted, Converter={StaticResource ReverseBoolConverter}, FallbackValue=True}"
+                     helpers:TextBoxBehavior.SelectAllTextOnFocus="True"/>
+
+            <TextBox Grid.Column="2" 
+                     Text="{Binding WorkoutLog.Repeats}" 
+                     Height="40" Width="150" Margin="5"
+                     IsEnabled="{Binding WorkoutLog.IsCompleted, Converter={StaticResource ReverseBoolConverter}, FallbackValue=True}"
+                     helpers:TextBoxBehavior.SelectAllTextOnFocus="True"/>
+
+            <CheckBox Grid.Column="3" 
+                      Foreground="Black" 
+                      IsChecked="{Binding WorkoutLog.IsCompleted}" 
+                      VerticalAlignment="Center"
+                      Style="{DynamicResource ToDoCheckBox}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SetIsWorkoutDoneCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </CheckBox>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WorkoutMeasurementListItemDataTemplate">
+        <Grid Height="35" Width="250">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="2" Background="{StaticResource WhiteBrush}" Opacity="0.0001"/>
+
+            <Path Stretch="Uniform" Height="18" 
+                  Data="{Binding Source={StaticResource ArmFlexOutline}, Path=Data}"
+                  Fill="{StaticResource DarkGreyBrush}" />
+
+            <TextBlock Grid.Column="1"
+                       Margin="15 0 0 0"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource DarkGreyBrush}"
+                       ToolTip="{Binding WorkoutDescription}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} - {1}">
+                        <Binding Path="BodyPart"/>
+                        <Binding Path="Measurement"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <Button Grid.Column="2" 
+                    Margin="5 0 0 0"
+                    Style="{StaticResource CrossButtonStyle}"
+                    VerticalAlignment="Center"
+                    Command="{Binding DataContext.RemoveMeasurementCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>
